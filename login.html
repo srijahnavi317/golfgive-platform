@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#logoGrad)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#logoGrad)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#logoGrad)"/>
+          <defs><linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+    <div class="nav-actions">
+      <span style="color:var(--text-secondary);font-size:14px;">Don't have an account?</span>
+      <a href="signup.html" class="btn-primary">Sign Up Free</a>
+    </div>
+  </div>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-bg">
+    <div class="auth-orb-1"></div>
+    <div class="auth-orb-2"></div>
+  </div>
+  <div class="auth-card" data-animate="fadeInUp">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="20" fill="url(#authLogo)" opacity="0.2"/>
+          <circle cx="24" cy="24" r="13" fill="url(#authLogo)" opacity="0.4"/>
+          <circle cx="24" cy="24" r="7" fill="url(#authLogo)"/>
+          <defs><linearGradient id="authLogo" x1="0" y1="0" x2="48" y2="48"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to your GolfGive account</p>
+    </div>
+
+    <div id="loginAlert" class="alert alert-error" style="display:none;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="loginAlertMsg">Invalid email or password</span>
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label" for="loginEmail">Email Address</label>
+        <div class="form-control-icon">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" id="loginEmail" class="form-control" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="loginPassword">
+          Password
+          <a href="#" style="float:right;color:var(--primary-light);font-size:12px;text-transform:none;">Forgot password?</a>
+        </label>
+        <div class="form-control-icon">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="loginPassword" class="form-control" placeholder="Your password" autocomplete="current-password" required />
+          <button type="button" id="togglePassword" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;">
+            <i class="fas fa-eye" id="passwordEyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Demo credentials hint -->
+      <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;">
+        <div style="font-size:12px;color:var(--primary-light);font-weight:600;margin-bottom:6px;">🎯 Demo Credentials</div>
+        <div style="font-size:12px;color:var(--text-secondary);display:flex;flex-direction:column;gap:5px;">
+          <div>User: <strong style="color:var(--text-primary);">james&#64;example.com</strong> / <strong style="color:var(--text-primary);">password123</strong></div>
+          <div>Admin: <strong style="color:var(--text-primary);">admin&#64;golfcharity.com</strong> / <strong style="color:var(--text-primary);">admin123</strong></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-full btn-lg" id="loginBtn">
+        <span>Sign In</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn-outline" style="flex:1;justify-content:center;gap:8px;" onclick="demoLogin('user')">
+        <i class="fas fa-user"></i> Demo User
+      </button>
+      <button class="btn-outline" style="flex:1;justify-content:center;gap:8px;" onclick="demoLogin('admin')">
+        <i class="fas fa-shield-alt"></i> Demo Admin
+      </button>
+    </div>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="signup.html">Create one free</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+  // Redirect if already logged in
+  if (Auth.isLoggedIn()) {
+    window.location.href = Auth.isAdmin() ? 'admin.html' : 'dashboard.html';
+  }
+
+  // Toggle password visibility
+  document.getElementById('togglePassword').addEventListener('click', function() {
+    const input = document.getElementById('loginPassword');
+    const icon = document.getElementById('passwordEyeIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'fas fa-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'fas fa-eye';
+    }
+  });
+
+  // Login form handler
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const alertEl = document.getElementById('loginAlert');
+    const alertMsg = document.getElementById('loginAlertMsg');
+
+    alertEl.style.display = 'none';
+    btn.innerHTML = '<div class="spinner spinner-sm"></div><span>Signing in...</span>';
+    btn.disabled = true;
+
+    try {
+      const res = await API.get('users', { limit: 100 });
+      const users = res.data || [];
+      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      
+      if (!user) {
+        alertMsg.textContent = 'No account found with that email address.';
+        alertEl.style.display = 'flex';
+        return;
+      }
+
+      // In production this would be bcrypt comparison
+      // For demo, we check the stored password_hash directly
+      if (user.password_hash !== password) {
+        alertMsg.textContent = 'Incorrect password. Please try again.';
+        alertEl.style.display = 'flex';
+        return;
+      }
+
+      if (!user.is_active) {
+        alertMsg.textContent = 'Your account has been deactivated. Please contact support.';
+        alertEl.style.display = 'flex';
+        return;
+      }
+
+      // Store user session
+      Auth.login(user);
+      Notify.success(`Welcome back, ${user.name}!`);
+      
+      setTimeout(() => {
+        window.location.href = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      }, 800);
+
+    } catch (err) {
+      alertMsg.textContent = 'Connection error. Please try again.';
+      alertEl.style.display = 'flex';
+    } finally {
+      btn.innerHTML = '<span>Sign In</span><i class="fas fa-arrow-right"></i>';
+      btn.disabled = false;
+    }
+  });
+
+  // Demo login shortcuts
+  async function demoLogin(type) {
+    const credentials = {
+      user: { email: 'james@example.com', password: 'password123' },
+      admin: { email: 'admin@golfcharity.com', password: 'admin123' }
+    };
+    const cred = credentials[type];
+    document.getElementById('loginEmail').value = cred.email;
+    document.getElementById('loginPassword').value = cred.password;
+    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#sbl)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#sbl)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#sbl)"/>
+          <defs><linearGradient id="sbl" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Main</div>
+    <button class="sidebar-item active" data-section="overview" onclick="showSection('overview', this)">
+      <i class="fas fa-th-large"></i> Overview
+    </button>
+    <button class="sidebar-item" data-section="scores" onclick="showSection('scores', this)">
+      <i class="fas fa-golf-ball"></i> My Scores
+    </button>
+    <button class="sidebar-item" data-section="draws" onclick="showSection('draws', this)">
+      <i class="fas fa-drum"></i> Draws & Results
+    </button>
+    <button class="sidebar-item" data-section="winnings" onclick="showSection('winnings', this)">
+      <i class="fas fa-trophy"></i> My Winnings
+    </button>
+    <div class="sidebar-section-label" style="margin-top:16px;">Charity</div>
+    <button class="sidebar-item" data-section="charity" onclick="showSection('charity', this)">
+      <i class="fas fa-heart"></i> Charity Support
+    </button>
+    <button class="sidebar-item" data-section="charities-browse" onclick="showSection('charities-browse', this)">
+      <i class="fas fa-search"></i> Browse Charities
+    </button>
+    <div class="sidebar-section-label" style="margin-top:16px;">Account</div>
+    <button class="sidebar-item" data-section="subscription" onclick="showSection('subscription', this)">
+      <i class="fas fa-credit-card"></i> Subscription
+    </button>
+    <button class="sidebar-item" data-section="profile" onclick="showSection('profile', this)">
+      <i class="fas fa-user"></i> Profile Settings
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user" id="sidebarUser">
+      <div class="sidebar-user-avatar">
+        <img id="sidebarAvatar" src="" alt="User" />
+      </div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarName">Loading...</div>
+        <div class="sidebar-user-email" id="sidebarEmail">...</div>
+      </div>
+      <a href="index.html" title="Sign Out" onclick="Auth.logout()" style="color:var(--text-muted);cursor:pointer;">
+        <i class="fas fa-sign-out-alt"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <button id="sidebarToggle" class="nav-mobile-btn" style="display:flex;"><i class="fas fa-bars"></i></button>
+    <span class="logo-text">GolfGive</span>
+    <div id="subStatusBadge"></div>
+  </div>
+
+  <!-- Section: Overview -->
+  <div class="section-content active" id="sec-overview">
+    <div class="content-header">
+      <div class="content-header-left">
+        <h1>Welcome back, <span id="welcomeName">User</span>! 👋</h1>
+        <p>Here's your GolfGive overview</p>
+      </div>
+      <div class="content-header-right">
+        <div id="subStatusBadgeDesktop"></div>
+        <button class="btn-primary btn-sm" onclick="showSection('scores', document.querySelector('[data-section=scores]'))">
+          <i class="fas fa-plus"></i> Add Score
+        </button>
+      </div>
+    </div>
+    <div class="content-body">
+      <!-- Subscription status banner for overview -->
+      <div id="subStatusBannerOverview"></div>
+      <!-- Stats -->
+      <div class="dashboard-grid" id="overviewStats">
+        <div class="dash-stat">
+          <div class="dash-stat-header">
+            <div class="dash-stat-icon stat-icon-purple"><i class="fas fa-credit-card"></i></div>
+            <div class="dash-stat-change up" id="subStatusChip">Active</div>
+          </div>
+          <div class="dash-stat-value" id="subPlanDisplay">—</div>
+          <div class="dash-stat-label">Subscription Plan</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-header">
+            <div class="dash-stat-icon stat-icon-blue"><i class="fas fa-golf-ball"></i></div>
+          </div>
+          <div class="dash-stat-value" id="scoreCountDisplay">0</div>
+          <div class="dash-stat-label">Scores Logged</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-header">
+            <div class="dash-stat-icon stat-icon-gold"><i class="fas fa-trophy"></i></div>
+          </div>
+          <div class="dash-stat-value" id="winningsDisplay">£0</div>
+          <div class="dash-stat-label">Total Winnings</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-header">
+            <div class="dash-stat-icon stat-icon-green"><i class="fas fa-heart"></i></div>
+          </div>
+          <div class="dash-stat-value" id="donatedDisplay">£0</div>
+          <div class="dash-stat-label">Donated to Charity</div>
+        </div>
+      </div>
+
+      <!-- Recent Scores + Draw Status -->
+      <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:20px;margin-bottom:24px;" class="two-col-grid">
+        <div class="card">
+          <div class="card-head">
+            <h3>My Latest Scores</h3>
+            <button class="btn-outline btn-sm" onclick="showSection('scores', document.querySelector('[data-section=scores]'))">
+              <i class="fas fa-plus"></i> Add Score
+            </button>
+          </div>
+          <div class="card-body" id="recentScoresCard">
+            <div class="empty-state">
+              <div class="empty-icon">⛳</div>
+              <div class="empty-title">No scores yet</div>
+              <div class="empty-desc">Add your first Stableford score to start entering draws</div>
+              <button class="btn-primary btn-sm" onclick="showSection('scores', document.querySelector('[data-section=scores]'))">Add First Score</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h3>April Draw</h3>
+            <span class="badge badge-pending">Upcoming</span>
+          </div>
+          <div class="card-body">
+            <div style="text-align:center;padding:20px 0;">
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">PRIZE POOL</div>
+              <div style="font-size:40px;font-weight:900;color:var(--accent-gold);font-family:'Sora',sans-serif;" id="drawPoolDisplay">£1,440</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">incl. £480 jackpot rollover</div>
+              <div class="draw-countdown" style="margin:0;">
+                <div class="countdown-label">Draw Closes In</div>
+                <div class="countdown-timer">
+                  <div class="countdown-unit"><span id="ddDays">--</span><small>Days</small></div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit"><span id="ddHours">--</span><small>Hrs</small></div>
+                  <div class="countdown-sep">:</div>
+                  <div class="countdown-unit"><span id="ddMins">--</span><small>Min</small></div>
+                </div>
+              </div>
+            </div>
+            <div id="drawParticipation" style="margin-top:16px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Winnings -->
+      <div class="card">
+        <div class="card-head">
+          <h3>Recent Winnings</h3>
+          <button class="btn-ghost btn-sm" onclick="showSection('winnings', document.querySelector('[data-section=winnings]'))">View All</button>
+        </div>
+        <div class="card-body" id="recentWinningsCard">
+          <div class="empty-state">
+            <div class="empty-icon">🏆</div>
+            <div class="empty-title">No winnings yet</div>
+            <div class="empty-desc">Keep entering draws — your lucky round is just around the corner!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Scores -->
+  <div class="section-content" id="sec-scores">
+    <div class="content-header">
+      <div class="content-header-left">
+        <h1>My Golf Scores</h1>
+        <p>Stableford format · Latest 5 scores used for draw entries</p>
+      </div>
+      <div class="content-header-right">
+        <button class="btn-primary" onclick="Modal.open('addScoreModal')">
+          <i class="fas fa-plus"></i> Add Score
+        </button>
+      </div>
+    </div>
+    <div class="content-body">
+      <!-- Score Guide -->
+      <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.08));border-color:rgba(99,102,241,0.2);">
+        <div class="card-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-weight:700;margin-bottom:4px;">How Your Scores Work</div>
+            <div style="font-size:14px;color:var(--text-secondary);">Your 5 most recent Stableford scores (1–45) become your monthly draw numbers. Adding a new score automatically removes the oldest one.</div>
+          </div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <div style="text-align:center;padding:12px 20px;background:rgba(255,255,255,0.05);border-radius:10px;">
+              <div style="font-size:24px;font-weight:800;color:var(--primary-light);">5</div>
+              <div style="font-size:11px;color:var(--text-muted);">Max Scores</div>
+            </div>
+            <div style="text-align:center;padding:12px 20px;background:rgba(255,255,255,0.05);border-radius:10px;">
+              <div style="font-size:24px;font-weight:800;color:var(--primary-light);">1–45</div>
+              <div style="font-size:11px;color:var(--text-muted);">Valid Range</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Score Cards -->
+      <div class="card">
+        <div class="card-head">
+          <h3>Current Scores</h3>
+          <div id="scoreCountChip" class="badge badge-active">0 / 5 slots</div>
+        </div>
+        <div class="card-body">
+          <div class="score-cards" id="scoreCardsGrid">
+            <!-- Filled dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Score History Table -->
+      <div class="card" style="margin-top:20px;">
+        <div class="card-head">
+          <h3>Score History</h3>
+        </div>
+        <div>
+          <table class="data-table" id="scoreHistoryTable">
+            <thead>
+              <tr>
+                <th>Score</th>
+                <th>Date Played</th>
+                <th>Course</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="scoreHistoryBody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No scores logged yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Draws -->
+  <div class="section-content" id="sec-draws">
+    <div class="content-header">
+      <div class="content-header-left">
+        <h1>Draws & Results</h1>
+        <p>Monthly prize draws based on your Stableford scores</p>
+      </div>
+    </div>
+    <div class="content-body">
+      <div id="drawsList">
+        <div style="text-align:center;padding:60px;"><div class="spinner" style="margin:0 auto;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Winnings -->
+  <div class="section-content" id="sec-winnings">
+    <div class="content-header">
+      <div class="content-header-left">
+        <h1>My Winnings</h1>
+        <p>Your prize history and payment status</p>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="dashboard-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;" id="winningStats">
+        <div class="dash-stat">
+          <div class="dash-stat-icon stat-icon-gold"><i class="fas fa-trophy"></i></div>
+          <div class="dash-stat-value" id="totalWinsVal">0</div>
+          <div class="dash-stat-label">Total Wins</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-icon stat-icon-green"><i class="fas fa-pound-sign"></i></div>
+          <div class="dash-stat-value" id="totalWonVal">£0</div>
+          <div class="dash-stat-label">Total Won</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-icon stat-icon-blue"><i class="fas fa-check-circle"></i></div>
+          <div class="dash-stat-value" id="totalPaidVal">£0</div>
+          <div class="dash-stat-label">Total Paid Out</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>All Winnings</h3></div>
+        <div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Draw Month</th><th>Match Type</th><th>Prize</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="winningsTableBody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No winnings yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Charity -->
+  <div class="section-content" id="sec-charity">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Charity Support</h1><p>Manage your charity contributions</p></div>
+    </div>
+    <div class="content-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="two-col-grid">
+        <div class="card">
+          <div class="card-head"><h3>Current Charity</h3></div>
+          <div class="card-body" id="currentCharityCard">
+            <div style="text-align:center;padding:20px;"><div class="spinner" style="margin:0 auto;"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Contribution Settings</h3></div>
+          <div class="card-body" id="contribSettingsCard">
+            <div style="text-align:center;padding:20px;"><div class="spinner" style="margin:0 auto;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <div class="card-head"><h3>Donation History</h3></div>
+        <div class="card-body" id="donationHistoryCard">
+          <div class="empty-state">
+            <div class="empty-icon">💚</div>
+            <div class="empty-title">Donations tracked automatically</div>
+            <div class="empty-desc">Your charity contributions are calculated from each subscription payment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Browse Charities -->
+  <div class="section-content" id="sec-charities-browse">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Browse Charities</h1><p>Discover and support causes you care about</p></div>
+    </div>
+    <div class="content-body">
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;" id="charityFilters">
+        <div class="search-bar" style="flex:1;min-width:240px;">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search charities..." id="charitySearchInput" oninput="filterCharities()" />
+        </div>
+        <div class="filter-tabs" id="categoryFilterTabs">
+          <button class="filter-tab active" data-cat="all" onclick="setCategoryFilter('all', this)">All</button>
+          <button class="filter-tab" data-cat="health" onclick="setCategoryFilter('health', this)">Health</button>
+          <button class="filter-tab" data-cat="children" onclick="setCategoryFilter('children', this)">Children</button>
+          <button class="filter-tab" data-cat="environment" onclick="setCategoryFilter('environment', this)">Environment</button>
+          <button class="filter-tab" data-cat="sports" onclick="setCategoryFilter('sports', this)">Sports</button>
+        </div>
+      </div>
+      <div class="charity-grid" id="charityBrowseGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:60px;"><div class="spinner" style="margin:0 auto;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Subscription -->
+  <div class="section-content" id="sec-subscription">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Subscription</h1><p>Manage your GolfGive subscription &amp; billing</p></div>
+      <div class="content-header-right">
+        <button class="btn-primary btn-sm" onclick="window.location.href='pricing.html'">
+          <i class="fas fa-plus"></i> Change Plan
+        </button>
+      </div>
+    </div>
+    <div class="content-body">
+      <!-- Status Banner -->
+      <div id="subStatusBanner"></div>
+      
+      <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:20px;" class="two-col-grid">
+        <!-- Left: Subscription Details -->
+        <div class="card" id="subDetailsCard">
+          <div class="card-body" style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
+        
+        <!-- Right: Actions & Benefits -->
+        <div>
+          <!-- Quick Actions -->
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-head"><h3>Quick Actions</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+              <a href="pricing.html" class="btn-outline" style="display:flex;align-items:center;gap:8px;text-decoration:none;justify-content:flex-start;">
+                <i class="fas fa-arrow-up"></i> Change / Upgrade Plan
+              </a>
+              <button class="btn-outline" onclick="openBillingPortal()" style="display:flex;align-items:center;gap:8px;justify-content:flex-start;">
+                <i class="fab fa-stripe"></i> Stripe Billing Portal
+              </button>
+              <button class="btn-outline" onclick="loadInvoiceHistory();document.getElementById('invoiceSection').style.display='block';" style="display:flex;align-items:center;gap:8px;justify-content:flex-start;">
+                <i class="fas fa-file-invoice"></i> View Invoice History
+              </button>
+              <button class="btn-danger" onclick="confirmCancelSub()" style="display:flex;align-items:center;gap:8px;justify-content:flex-start;">
+                <i class="fas fa-times"></i> Cancel Subscription
+              </button>
+            </div>
+          </div>
+          
+          <!-- Benefits -->
+          <div class="card">
+            <div class="card-head"><h3>Your Benefits</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><i class="fas fa-check" style="color:var(--accent-green);width:16px;"></i> Monthly prize draw entries</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><i class="fas fa-check" style="color:var(--accent-green);width:16px;"></i> Unlimited score logging</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><i class="fas fa-check" style="color:var(--accent-green);width:16px;"></i> Charity contributions</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><i class="fas fa-check" style="color:var(--accent-green);width:16px;"></i> Real-time prize pool updates</div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><i class="fas fa-check" style="color:var(--accent-green);width:16px;"></i> Winner verification & payouts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Invoice History (hidden by default) -->
+      <div class="card" id="invoiceSection" style="display:none;margin-top:20px;">
+        <div class="card-head">
+          <h3><i class="fas fa-file-invoice" style="margin-right:8px;color:var(--primary-light);"></i>Invoice History</h3>
+          <button class="btn-ghost btn-sm" onclick="document.getElementById('invoiceSection').style.display='none'">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="card-body" id="invoiceHistoryContainer">
+          <div style="text-align:center;padding:20px;"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
+      </div>
+
+      <!-- Webhook Simulator (dev only, collapsible) -->
+      <details class="card" style="margin-top:20px;" id="webhookSimulator">
+        <summary style="cursor:pointer;padding:16px 20px;font-weight:700;font-size:14px;list-style:none;
+          display:flex;align-items:center;justify-content:space-between;">
+          <span><i class="fas fa-flask" style="margin-right:8px;color:var(--primary-light);"></i> Stripe Webhook Simulator</span>
+          <span style="font-size:11px;background:rgba(245,158,11,0.15);color:#fcd34d;padding:2px 8px;border-radius:10px;margin-left:8px;">Dev Tool</span>
+        </summary>
+        <div class="card-body" style="border-top:1px solid var(--border);">
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+            Simulate Stripe webhook events to test subscription lifecycle changes. In production, these fire automatically from Stripe.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-outline btn-sm" onclick="simulateWebhook('checkout.session.completed')">
+              <i class="fas fa-check-circle" style="color:#10b981;"></i> Checkout Completed
+            </button>
+            <button class="btn-outline btn-sm" onclick="simulateWebhook('invoice.paid')">
+              <i class="fas fa-sync" style="color:#6366f1;"></i> Invoice Paid (Renewal)
+            </button>
+            <button class="btn-outline btn-sm" onclick="simulateWebhook('invoice.payment_failed')">
+              <i class="fas fa-exclamation-circle" style="color:#ef4444;"></i> Payment Failed
+            </button>
+            <button class="btn-outline btn-sm" onclick="simulateWebhook('customer.subscription.deleted')">
+              <i class="fas fa-times-circle" style="color:#f59e0b;"></i> Subscription Deleted
+            </button>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Section: Profile -->
+  <div class="section-content" id="sec-profile">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Profile Settings</h1><p>Manage your account information</p></div>
+    </div>
+    <div class="content-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="two-col-grid">
+        <div class="card">
+          <div class="card-head"><h3>Personal Information</h3></div>
+          <div class="card-body">
+            <form id="profileForm" onsubmit="updateProfile(event)">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="profileName" class="form-control" placeholder="Your name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="profileEmail" class="form-control" readonly style="opacity:0.6;" />
+                <div class="form-hint">Email cannot be changed</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="profilePhone" class="form-control" placeholder="+44 7700 900000" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Country</label>
+                <select id="profileCountry" class="form-control">
+                  <option value="UK">United Kingdom</option>
+                  <option value="IE">Ireland</option>
+                  <option value="US">United States</option>
+                  <option value="AU">Australia</option>
+                  <option value="CA">Canada</option>
+                </select>
+              </div>
+              <button type="submit" class="btn-primary">Save Changes</button>
+            </form>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-head"><h3>Change Password</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" id="currentPass" class="form-control" placeholder="Current password" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" id="newPass" class="form-control" placeholder="New password (min 8 chars)" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" id="confirmPass" class="form-control" placeholder="Confirm new password" />
+              </div>
+              <button class="btn-primary" onclick="changePassword()">Update Password</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Danger Zone</h3></div>
+            <div class="card-body">
+              <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">Permanently delete your account and all associated data.</p>
+              <button class="btn-danger" onclick="Notify.error('Account deletion requires email confirmation')">
+                <i class="fas fa-trash"></i> Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Score Modal -->
+<div class="modal-overlay" id="addScoreModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Add New Score</h3>
+      <button class="modal-close" onclick="Modal.close('addScoreModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Stableford Score</label>
+      <input type="number" id="newScore" class="form-control" placeholder="Enter score (1-45)" min="1" max="45" />
+      <div class="form-hint">Stableford points: 1 minimum, 45 maximum</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date Played</label>
+      <input type="date" id="newScoreDate" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course Name (optional)</label>
+      <input type="text" id="newScoreCourse" class="form-control" placeholder="e.g. St Andrews Links" />
+    </div>
+    <div id="scoreWarning" style="display:none;" class="alert alert-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Adding this score will remove your oldest score to maintain the 5-score limit.</span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="Modal.close('addScoreModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitScoreWithGuard()">
+        <i class="fas fa-plus"></i> Add Score
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Score Modal -->
+<div class="modal-overlay" id="editScoreModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Score</h3>
+      <button class="modal-close" onclick="Modal.close('editScoreModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <input type="hidden" id="editScoreId" />
+    <div class="form-group">
+      <label class="form-label">Stableford Score</label>
+      <input type="number" id="editScoreVal" class="form-control" min="1" max="45" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date Played</label>
+      <input type="date" id="editScoreDate" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course Name</label>
+      <input type="text" id="editScoreCourse" class="form-control" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="Modal.close('editScoreModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveEditScore()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Proof Modal -->
+<div class="modal-overlay" id="uploadProofModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Upload Winning Proof</h3>
+      <button class="modal-close" onclick="Modal.close('uploadProofModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <input type="hidden" id="proofWinnerId" />
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">
+      Please upload a screenshot or document proving your participation in the draw for the claimed period.
+    </p>
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('proofFile').click()">
+      <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+      <div class="upload-text">Click to upload or drag and drop</div>
+      <div class="upload-hint">PNG, JPG, PDF up to 10MB</div>
+    </div>
+    <input type="file" id="proofFile" accept="image/*,.pdf" style="display:none;" onchange="handleProofFile(event)" />
+    <div id="uploadPreview" style="display:none;margin-top:16px;">
+      <div class="alert alert-success"><i class="fas fa-check-circle"></i> <span id="uploadFileName">File selected</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="Modal.close('uploadProofModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitProof()">Submit Proof</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/stripe-config.js"></script>
+<script src="js/stripe-checkout.js"></script>
+<script src="js/stripe-webhooks.js"></script>
+<script src="js/subscription-guard.js"></script>
+<script>
+  // Auth guard
+  const currentUser = Auth.getUser();
+  if (!currentUser) { window.location.href = 'login.html'; throw new Error('Redirect'); }
+  let userScores = [];
+  let userWinnings = [];
+  let allCharities = [];
+  let userCharity = null;
+  let userSub = null;
+  let userSubStatus = null;
+  let currentCategoryFilter = 'all';
+
+  // ===== INIT =====
+  async function init() {
+    // Update sidebar
+    document.getElementById('sidebarName').textContent = currentUser.name;
+    document.getElementById('sidebarEmail').textContent = currentUser.email;
+    document.getElementById('sidebarAvatar').src = currentUser.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.name}`;
+    document.getElementById('welcomeName').textContent = currentUser.name.split(' ')[0];
+
+    // Run auto-expiry check
+    await checkSubscriptionExpiry();
+
+    // Load data
+    await Promise.all([
+      loadSubscription(),
+      loadScores(),
+      loadWinnings(),
+      loadCharityData()
+    ]);
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+    
+    // Check URL hash for direct section navigation
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      const btn = document.querySelector(`[data-section="${hash}"]`);
+      if (btn) showSection(hash, btn);
+    }
+  }
+
+  // ===== SECTION NAVIGATION =====
+  function showSection(section, btn) {
+    document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    
+    const content = document.getElementById(`sec-${section}`);
+    if (content) content.classList.add('active');
+    if (btn) btn.classList.add('active');
+    
+    // Lazy load sections
+    if (section === 'draws') loadDraws();
+    if (section === 'charities-browse') loadCharitiesBrowse();
+    if (section === 'subscription') loadSubDetails();
+    if (section === 'charity') loadCharitySection();
+    if (section === 'winnings') loadWinningsSection();
+    if (section === 'profile') loadProfile();
+    
+    window.location.hash = section;
+    // Close mobile sidebar
+    document.getElementById('sidebar').classList.remove('open');
+  }
+
+  // ===== SUBSCRIPTION =====
+  async function loadSubscription() {
+    userSubStatus = await SubscriptionGuard.validate(currentUser.id);
+    userSub = userSubStatus.subscription;
+    
+    const statusChip = document.getElementById('subStatusChip');
+    const planDisplay = document.getElementById('subPlanDisplay');
+    const badgeDesktop = document.getElementById('subStatusBadgeDesktop');
+    const mobileBadge = document.getElementById('subStatusBadge');
+    
+    if (userSubStatus.canAccess) {
+      statusChip.className = 'dash-stat-change up';
+      statusChip.textContent = 'Active';
+      const planLabel = userSubStatus.planType === 'yearly' ? 'Yearly' : 'Monthly';
+      planDisplay.textContent = planLabel + ' Plan';
+      badgeDesktop.innerHTML = '<span class="badge badge-active"><i class="fas fa-circle" style="font-size:8px;margin-right:4px;"></i> Active</span>';
+      if (mobileBadge) mobileBadge.innerHTML = '<span class="badge badge-active" style="font-size:10px;">Active</span>';
+    } else {
+      statusChip.className = 'dash-stat-change down';
+      const statusLabel = userSubStatus.status === 'none' ? 'No Plan' : 
+                          userSubStatus.status.replace('_', ' ').replace(/^\w/, c => c.toUpperCase());
+      statusChip.textContent = statusLabel;
+      planDisplay.textContent = userSubStatus.status === 'none' ? 'No Plan' : statusLabel;
+      badgeDesktop.innerHTML = `<a href="pricing.html" class="badge" style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);cursor:pointer;text-decoration:none;">
+        <i class="fas fa-exclamation-circle" style="font-size:8px;margin-right:4px;"></i> ${statusLabel}
+      </a>`;
+      if (mobileBadge) mobileBadge.innerHTML = `<a href="pricing.html" class="badge" style="background:rgba(239,68,68,0.15);color:#f87171;font-size:10px;text-decoration:none;">Upgrade</a>`;
+    }
+
+    // Show subscription status banner
+    SubscriptionGuard.showStatusBanner(userSubStatus, 'subStatusBanner');
+    SubscriptionGuard.showStatusBanner(userSubStatus, 'subStatusBannerOverview');
+  }
+
+  async function loadSubDetails() {
+    const card = document.getElementById('subDetailsCard');
+    userSubStatus = await SubscriptionGuard.validate(currentUser.id, true); // bypass cache
+    userSub = userSubStatus.subscription;
+    
+    if (!userSub) {
+      card.innerHTML = `
+        <div class="card-body" style="text-align:center;padding:48px 32px;">
+          <div style="font-size:56px;margin-bottom:20px;">💳</div>
+          <h3 style="margin-bottom:10px;font-size:20px;">No Active Subscription</h3>
+          <p style="color:var(--text-secondary);margin-bottom:28px;max-width:300px;margin-left:auto;margin-right:auto;">
+            Subscribe to enter monthly prize draws, log scores, and support charities.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+            <a href="pricing.html" class="btn-primary btn-lg" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+              <i class="fas fa-credit-card"></i> Subscribe from £9.99/month
+            </a>
+            <div style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+              <i class="fas fa-shield-alt"></i> Secured by Stripe · Cancel anytime
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const daysLeft = DateHelper.daysUntil(userSub.current_period_end);
+    const daysLeftNum = typeof daysLeft === 'string' && daysLeft.includes('days') 
+      ? parseInt(daysLeft) : (daysLeft === 'Today' ? 0 : (daysLeft === 'Expired' ? -1 : 0));
+    const progressPct = calculateProgressPct(userSub);
+    const planType = userSub.plan_type || userSub.plan;
+    
+    card.innerHTML = `
+      <div class="card-head">
+        <h3>Current Plan</h3>
+        ${SubscriptionGuard.renderStatusBadge(userSubStatus)}
+      </div>
+      <div class="card-body">
+        <!-- Plan Header -->
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;padding:20px;
+          background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.05));
+          border:1px solid rgba(99,102,241,0.2);border-radius:14px;">
+          <div style="width:60px;height:60px;background:var(--gradient-primary);border-radius:14px;
+            display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">
+            ${planType === 'yearly' ? '🗓️' : '📅'}
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:22px;font-weight:800;text-transform:capitalize;">${planType === 'yearly' ? 'Yearly' : 'Monthly'} Plan</div>
+            <div style="color:var(--text-secondary);font-size:15px;">
+              £${(userSub.amount / 100).toFixed(2)} / ${planType === 'yearly' ? 'year' : 'month'}
+            </div>
+          </div>
+          ${userSub.cancel_at_period_end ? `
+            <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);
+              border-radius:8px;padding:6px 12px;font-size:12px;color:#fcd34d;text-align:center;">
+              <i class="fas fa-clock"></i><br />Cancels at<br />period end
+            </div>
+          ` : ''}
+        </div>
+        
+        <!-- Period Info Grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div style="padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Renewal Date</div>
+            <div style="font-weight:700;font-size:15px;">${DateHelper.format(userSub.current_period_end)}</div>
+          </div>
+          <div style="padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Days Remaining</div>
+            <div style="font-weight:700;font-size:15px;color:${daysLeft === 'Expired' ? '#f87171' : 'var(--text-primary)'};">${daysLeft}</div>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:6px;">
+            <span>Period Start: ${DateHelper.format(userSub.current_period_start)}</span>
+            <span>End: ${DateHelper.format(userSub.current_period_end)}</span>
+          </div>
+          <div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;">
+            <div style="height:100%;border-radius:4px;width:${progressPct}%;
+              background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width 1s ease;"></div>
+          </div>
+          <div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:4px;">${progressPct}% used</div>
+        </div>
+
+        <!-- Payment Method -->
+        ${userSub.payment_method_last4 ? `
+          <div style="display:flex;align-items:center;gap:12px;padding:14px;
+            background:rgba(255,255,255,0.04);border-radius:10px;margin-bottom:16px;">
+            <div style="width:40px;height:28px;background:#1a1a2e;border:1px solid rgba(255,255,255,0.1);
+              border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#94a3b8;font-weight:700;">
+              ${userSub.payment_method_brand ? userSub.payment_method_brand.toUpperCase().slice(0,4) : 'CARD'}
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;">•••• •••• •••• ${userSub.payment_method_last4}</div>
+              <div style="font-size:11px;color:var(--text-muted);">Payment method</div>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Stripe IDs (collapsible) -->
+        <details style="margin-bottom:16px;">
+          <summary style="font-size:12px;color:var(--text-muted);cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-info-circle"></i> Billing details
+          </summary>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+            ${userSub.stripe_customer_id ? `<div style="font-size:11px;color:var(--text-muted);background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:6px;font-family:monospace;">Customer: ${userSub.stripe_customer_id}</div>` : ''}
+            ${userSub.stripe_subscription_id ? `<div style="font-size:11px;color:var(--text-muted);background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:6px;font-family:monospace;">Subscription: ${userSub.stripe_subscription_id}</div>` : ''}
+          </div>
+        </details>
+      </div>
+    `;
+  }
+
+  function calculateProgressPct(sub) {
+    if (!sub) return 0;
+    const start = new Date(sub.current_period_start || sub.created_at);
+    const end = new Date(sub.current_period_end);
+    const now = new Date();
+    const total = end - start;
+    const elapsed = now - start;
+    return Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+  }
+
+  async function confirmCancelSub() {
+    if (!userSub) { Notify.error('No active subscription found'); return; }
+    
+    const planLabel = userSub.plan_type === 'yearly' ? 'Yearly' : 'Monthly';
+    const renewalDate = DateHelper.format(userSub.current_period_end);
+    
+    const confirmed = confirm(
+      `Cancel your ${planLabel} subscription?\n\n` +
+      `You will retain access until ${renewalDate}.\n` +
+      `After that date, you will lose access to premium features.\n\n` +
+      `Proceed with cancellation?`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      await StripeCheckout.cancelSubscription(userSub.id, currentUser.id);
+      SubscriptionGuard.clearCache();
+      Notify.success(`Subscription cancelled. Access continues until ${renewalDate}.`);
+      await loadSubscription();
+      await loadSubDetails();
+    } catch (err) {
+      Notify.error('Failed to cancel subscription: ' + err.message);
+    }
+  }
+
+  function openBillingPortal() {
+    if (!userSub) { Notify.error('No subscription found'); return; }
+    StripeCheckout.openCustomerPortal(userSub.stripe_customer_id);
+  }
+
+  async function handleResubscribe(planType) {
+    try {
+      await StripeCheckout.startCheckout(planType || 'monthly', currentUser.email, currentUser.id);
+    } catch (err) {
+      Notify.error('Failed to start checkout: ' + err.message);
+    }
+  }
+
+  async function loadInvoiceHistory() {
+    const container = document.getElementById('invoiceHistoryContainer');
+    if (!container) return;
+    try {
+      const res = await API.get('invoices', { limit: 20 });
+      const invoices = (res.data || [])
+        .filter(inv => inv.user_id === currentUser.id)
+        .sort((a, b) => new Date(b.invoice_date) - new Date(a.invoice_date));
+      
+      if (!invoices.length) {
+        container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:14px;">No invoices yet</div>';
+        return;
+      }
+      
+      container.innerHTML = `
+        <table class="data-table">
+          <thead><tr><th>Date</th><th>Plan</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            ${invoices.map(inv => `
+              <tr>
+                <td>${DateHelper.format(inv.invoice_date)}</td>
+                <td style="text-transform:capitalize;">${inv.plan_type || '—'}</td>
+                <td style="font-weight:700;">£${((inv.amount || 0) / 100).toFixed(2)}</td>
+                <td><span class="badge badge-${inv.status === 'paid' ? 'active' : 'expired'}">${inv.status}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (e) {
+      container.innerHTML = '<div style="color:var(--text-muted);font-size:14px;">Failed to load invoices</div>';
+    }
+  }
+
+  // ===== SCORES =====
+  async function loadScores() {
+    try {
+      userScores = await ScoreManager.getUserScores(currentUser.id);
+      renderScoreCards();
+      renderScoreHistory();
+      updateOverviewScores();
+      
+      const count = userScores.length;
+      document.getElementById('scoreCountDisplay').textContent = count;
+      document.getElementById('scoreCountChip').textContent = `${count} / 5 slots`;
+      
+      // Show warning in modal if 5 scores
+      document.getElementById('scoreWarning').style.display = count >= 5 ? 'flex' : 'none';
+      
+      // Update draw participation
+      updateDrawParticipation();
+    } catch (e) {
+      console.error('loadScores error:', e);
+    }
+  }
+
+  function renderScoreCards() {
+    const grid = document.getElementById('scoreCardsGrid');
+    const slots = [];
+    
+    for (let i = 0; i < 5; i++) {
+      const score = userScores[i];
+      if (score) {
+        const isLatest = i === 0;
+        slots.push(`
+          <div class="score-card ${isLatest ? 'latest' : ''}">
+            ${isLatest ? '<div class="score-latest-badge">Latest</div>' : ''}
+            <button class="score-card-delete" onclick="deleteScore('${score.id}')" title="Delete">×</button>
+            <div class="score-card-num">${score.score}</div>
+            <div class="score-card-date">${DateHelper.format(score.played_at, {day:'2-digit',month:'short'})}</div>
+            <div class="score-card-course">${score.course_name || 'Unknown Course'}</div>
+          </div>
+        `);
+      } else {
+        slots.push(`
+          <div class="score-card" style="opacity:0.3;cursor:pointer;" onclick="Modal.open('addScoreModal')" title="Add score">
+            <div style="font-size:28px;color:var(--text-muted);">+</div>
+            <div class="score-card-date">Empty</div>
+            <div class="score-card-course">Click to add</div>
+          </div>
+        `);
+      }
+    }
+    grid.innerHTML = slots.join('');
+  }
+
+  function renderScoreHistory() {
+    const tbody = document.getElementById('scoreHistoryBody');
+    if (!userScores.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No scores logged yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = userScores.map((s, i) => `
+      <tr>
+        <td><span style="font-size:20px;font-weight:800;color:var(--primary-light);">${s.score}</span></td>
+        <td>${DateHelper.format(s.played_at)}</td>
+        <td>${s.course_name || '—'}</td>
+        <td>${i < 5 ? '<span class="badge badge-active">Active Draw Entry</span>' : '<span class="badge badge-inactive">Archived</span>'}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="openEditScore('${s.id}',${s.score},'${s.played_at}','${s.course_name || ''}')">Edit</button>
+            <button class="btn-danger btn-sm" onclick="deleteScore('${s.id}')">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function updateOverviewScores() {
+    const card = document.getElementById('recentScoresCard');
+    if (!userScores.length) {
+      card.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⛳</div>
+          <div class="empty-title">No scores yet</div>
+          <div class="empty-desc">Add your first Stableford score to start entering draws</div>
+          <button class="btn-primary btn-sm" onclick="showSection('scores', document.querySelector('[data-section=scores]'))">Add First Score</button>
+        </div>`;
+      return;
+    }
+    const bars = userScores.map((s, i) => `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:44px;text-align:right;font-size:11px;color:var(--text-muted);">${DateHelper.format(s.played_at, {day:'2-digit',month:'short'})}</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;background:var(--gradient-primary);border-radius:4px;width:${(s.score/45*100).toFixed(0)}%;transition:width 0.6s ease ${i*0.1}s;"></div>
+        </div>
+        <div style="font-size:14px;font-weight:700;width:28px;">${s.score}</div>
+        <div style="font-size:11px;color:var(--text-muted);width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.course_name || 'Unknown'}</div>
+      </div>
+    `).join('');
+    card.innerHTML = bars;
+  }
+
+  async function submitScore() {
+    const score = document.getElementById('newScore').value;
+    const date = document.getElementById('newScoreDate').value;
+    const course = document.getElementById('newScoreCourse').value;
+
+    if (!Validate.score(score)) { Notify.error('Score must be between 1 and 45'); return; }
+    if (!date) { Notify.error('Please select the date played'); return; }
+
+    try {
+      await ScoreManager.addScore(currentUser.id, {
+        score: parseInt(score),
+        played_at: new Date(date).toISOString(),
+        course_name: course
+      });
+      Modal.close('addScoreModal');
+      document.getElementById('newScore').value = '';
+      document.getElementById('newScoreDate').value = '';
+      document.getElementById('newScoreCourse').value = '';
+      Notify.success('Score added successfully!');
+      await loadScores();
+    } catch (e) {
+      Notify.error('Failed to add score: ' + e.message);
+    }
+  }
+
+  async function deleteScore(id) {
+    if (!confirm('Delete this score?')) return;
+    try {
+      await ScoreManager.deleteScore(id);
+      Notify.success('Score deleted');
+      await loadScores();
+    } catch { Notify.error('Failed to delete score'); }
+  }
+
+  function openEditScore(id, score, date, course) {
+    document.getElementById('editScoreId').value = id;
+    document.getElementById('editScoreVal').value = score;
+    document.getElementById('editScoreDate').value = date ? date.split('T')[0] : '';
+    document.getElementById('editScoreCourse').value = course;
+    Modal.open('editScoreModal');
+  }
+
+  async function saveEditScore() {
+    const id = document.getElementById('editScoreId').value;
+    const score = document.getElementById('editScoreVal').value;
+    const date = document.getElementById('editScoreDate').value;
+    const course = document.getElementById('editScoreCourse').value;
+    
+    if (!Validate.score(score)) { Notify.error('Score must be between 1 and 45'); return; }
+    try {
+      await ScoreManager.updateScore(id, {
+        score: parseInt(score),
+        played_at: new Date(date).toISOString(),
+        course_name: course
+      });
+      Modal.close('editScoreModal');
+      Notify.success('Score updated');
+      await loadScores();
+    } catch { Notify.error('Failed to update score'); }
+  }
+
+  // Set today as default date
+  document.getElementById('newScoreDate').value = new Date().toISOString().split('T')[0];
+
+  // ===== DRAWS =====
+  async function loadDraws() {
+    const container = document.getElementById('drawsList');
+    try {
+      const res = await API.get('draws', { limit: 20 });
+      const draws = (res.data || []).sort((a, b) => b.draw_month.localeCompare(a.draw_month));
+      
+      if (!draws.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">🎲</div><div class="empty-title">No draws yet</div></div>';
+        return;
+      }
+
+      container.innerHTML = draws.map(draw => {
+        const prizes = DrawEngine.calculatePrizes(draw.total_prize_pool || 0, draw.jackpot_rollover || 0);
+        const myMatch = draw.drawn_numbers && draw.drawn_numbers.length && userScores.length ? 
+          DrawEngine.checkMatch(userScores, draw.drawn_numbers) : null;
+        
+        return `
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-head">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div>
+                  <h3>${draw.draw_month} Draw</h3>
+                  <div style="font-size:12px;color:var(--text-muted);">${draw.mode === 'random' ? '🎲 Random Mode' : '🧮 Algorithmic Mode'}</div>
+                </div>
+              </div>
+              <span class="badge badge-${draw.status}">${draw.status}</span>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;">
+                <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.04);border-radius:8px;">
+                  <div style="font-size:20px;font-weight:800;color:var(--accent-gold);">£${(draw.total_prize_pool || 0).toLocaleString()}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">Total Pool</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:rgba(245,158,11,0.08);border-radius:8px;">
+                  <div style="font-size:18px;font-weight:700;color:var(--accent-gold);">£${prizes.fiveMatch.toLocaleString()}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">5-Match (40%)</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:rgba(148,163,184,0.08);border-radius:8px;">
+                  <div style="font-size:18px;font-weight:700;color:#94a3b8;">£${prizes.fourMatch.toLocaleString()}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">4-Match (35%)</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:rgba(180,120,60,0.08);border-radius:8px;">
+                  <div style="font-size:18px;font-weight:700;color:#cd7f32;">£${prizes.threeMatch.toLocaleString()}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">3-Match (25%)</div>
+                </div>
+              </div>
+              ${draw.drawn_numbers && draw.drawn_numbers.length ? `
+                <div style="margin-bottom:12px;">
+                  <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">DRAWN NUMBERS</div>
+                  <div class="draw-balls">
+                    ${draw.drawn_numbers.map(n => `<div class="draw-ball">${n}</div>`).join('')}
+                  </div>
+                </div>
+              ` : '<div style="font-size:14px;color:var(--text-muted);">Draw not yet run</div>'}
+              ${myMatch && myMatch.matchCount >= 3 ? `
+                <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:14px;margin-top:12px;">
+                  <div style="font-weight:600;color:var(--accent-green);margin-bottom:4px;">🎉 You matched ${myMatch.matchCount} numbers!</div>
+                  <div style="font-size:13px;color:var(--text-secondary);">Matched: ${myMatch.matched.join(', ')}</div>
+                </div>
+              ` : myMatch && draw.status === 'published' ? `
+                <div style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.15);border-radius:10px;padding:14px;margin-top:12px;">
+                  <div style="font-size:13px;color:var(--text-muted);">You matched ${myMatch.matchCount} number${myMatch.matchCount !== 1 ? 's' : ''} (need 3+ to win)</div>
+                </div>
+              ` : ''}
+              ${draw.jackpot_rollover > 0 ? `<div style="margin-top:10px;padding:8px 12px;background:rgba(239,68,68,0.08);border-radius:8px;font-size:13px;color:#f87171;"><i class="fas fa-fire" style="margin-right:6px;"></i>£${draw.jackpot_rollover} jackpot rolled over to next draw</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Failed to load draws</div></div>';
+    }
+  }
+
+  function updateDrawParticipation() {
+    const el = document.getElementById('drawParticipation');
+    if (!el) return;
+    if (userScores.length > 0) {
+      el.innerHTML = `
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:12px;">
+          <div style="font-size:12px;font-weight:600;color:var(--accent-green);margin-bottom:6px;">✓ You're in the draw!</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Your numbers: <strong style="color:var(--text-primary);">${userScores.slice(0,5).map(s=>s.score).join(', ')}</strong></div>
+        </div>`;
+    } else {
+      el.innerHTML = `
+        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px;">
+          <div style="font-size:12px;color:var(--accent-gold);">⚠️ Add scores to enter this draw</div>
+        </div>`;
+    }
+  }
+
+  // ===== WINNINGS =====
+  async function loadWinnings() {
+    try {
+      const res = await API.get('winners', { limit: 100 });
+      userWinnings = (res.data || []).filter(w => w.user_id === currentUser.id);
+      
+      const total = userWinnings.reduce((s, w) => s + (w.prize_amount || 0), 0);
+      const paid = userWinnings.filter(w => w.payment_status === 'paid').reduce((s, w) => s + (w.prize_amount || 0), 0);
+      
+      document.getElementById('winningsDisplay').textContent = formatCurrency(total);
+      
+      // Update recent winnings card
+      const recentCard = document.getElementById('recentWinningsCard');
+      if (!userWinnings.length) {
+        recentCard.innerHTML = `<div class="empty-state"><div class="empty-icon">🏆</div><div class="empty-title">No winnings yet</div><div class="empty-desc">Keep entering draws!</div></div>`;
+      } else {
+        recentCard.innerHTML = userWinnings.slice(0, 3).map(w => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:36px;height:36px;background:var(--gradient-gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">🏆</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;">${w.match_type}-Number Match</div>
+                <div style="font-size:11px;color:var(--text-muted);">Draw ${w.draw_id}</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:700;color:var(--accent-gold);">${formatCurrency(w.prize_amount)}</div>
+              <span class="badge badge-${w.payment_status}" style="font-size:10px;">${w.payment_status}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    } catch (e) { console.error(e); }
+  }
+
+  async function loadWinningsSection() {
+    const tbody = document.getElementById('winningsTableBody');
+    
+    try {
+      const res = await API.get('winners', { limit: 100 });
+      const wins = (res.data || []).filter(w => w.user_id === currentUser.id);
+      const total = wins.reduce((s, w) => s + (w.prize_amount || 0), 0);
+      const paid = wins.filter(w => w.payment_status === 'paid').reduce((s, w) => s + (w.prize_amount || 0), 0);
+      
+      document.getElementById('totalWinsVal').textContent = wins.length;
+      document.getElementById('totalWonVal').textContent = formatCurrency(total);
+      document.getElementById('totalPaidVal').textContent = formatCurrency(paid);
+      
+      if (!wins.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No winnings yet</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = wins.map(w => `
+        <tr>
+          <td>${w.draw_id}</td>
+          <td><span style="font-weight:700;">${w.match_type}</span>-Number Match</td>
+          <td><span style="font-weight:700;color:var(--accent-gold);">${formatCurrency(w.prize_amount)}</span></td>
+          <td><span class="badge badge-${w.payment_status}">${w.payment_status}</span></td>
+          <td>
+            ${w.payment_status === 'pending' && !w.proof_url ? 
+              `<button class="btn-primary btn-sm" onclick="openUploadProof('${w.id}')"><i class="fas fa-upload"></i> Upload Proof</button>` :
+              w.payment_status === 'pending' ? '<span style="font-size:12px;color:var(--text-muted);">Awaiting review</span>' :
+              w.payment_status === 'paid' ? '<span style="color:var(--accent-green);"><i class="fas fa-check-circle"></i> Paid</span>' :
+              '<span style="font-size:12px;color:var(--text-muted);">—</span>'
+            }
+          </td>
+        </tr>
+      `).join('');
+    } catch { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">Failed to load</td></tr>'; }
+  }
+
+  // ===== CHARITY =====
+  async function loadCharityData() {
+    try {
+      const [charRes, selRes] = await Promise.all([
+        API.get('charities', { limit: 20 }),
+        API.get('user_charity_selections', { limit: 100 })
+      ]);
+      allCharities = (charRes.data || []).filter(c => c.is_active);
+      const selections = (selRes.data || []).filter(s => s.user_id === currentUser.id && s.is_active);
+      
+      if (selections.length) {
+        userCharity = { ...selections[0], charity: allCharities.find(c => c.id === selections[0].charity_id) };
+      }
+      
+      const donated = userCharity ? (userCharity.total_donated || 0) : 0;
+      document.getElementById('donatedDisplay').textContent = formatCurrency(donated);
+    } catch (e) { console.error(e); }
+  }
+
+  async function loadCharitySection() {
+    await loadCharityData();
+    
+    const charCard = document.getElementById('currentCharityCard');
+    const contribCard = document.getElementById('contribSettingsCard');
+    
+    if (!userCharity || !userCharity.charity) {
+      charCard.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">💚</div>
+          <div class="empty-title">No charity selected</div>
+          <div class="empty-desc">Browse and select a charity to support</div>
+          <button class="btn-primary" onclick="showSection('charities-browse', document.querySelector('[data-section=charities-browse]'))">Browse Charities</button>
+        </div>`;
+    } else {
+      const c = userCharity.charity;
+      charCard.innerHTML = `
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <img src="${c.image_url}" style="width:80px;height:80px;border-radius:12px;object-fit:cover;" onerror="this.src='https://via.placeholder.com/80'" />
+          <div style="flex:1;">
+            <div class="badge badge-active" style="margin-bottom:8px;">${c.category}</div>
+            <div style="font-size:18px;font-weight:700;margin-bottom:6px;">${c.name}</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">${c.short_description}</div>
+            <div style="font-size:13px;color:var(--accent-green);">💚 ${formatCurrency(userCharity.total_donated || 0)} donated</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:10px;">
+          <button class="btn-outline btn-sm" onclick="showSection('charities-browse', document.querySelector('[data-section=charities-browse]'))">Change Charity</button>
+          <a href="charity.html?id=${c.id}" class="btn-ghost btn-sm">View Page <i class="fas fa-external-link-alt"></i></a>
+        </div>`;
+    }
+
+    // Contribution settings
+    const pct = userCharity ? (userCharity.contribution_percentage || 10) : 10;
+    const monthlyAmount = userSub && userSub.plan === 'yearly' ? 89.99 / 12 : 9.99;
+    const contribAmt = (monthlyAmount * pct / 100).toFixed(2);
+    
+    contribCard.innerHTML = `
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:48px;font-weight:900;font-family:'Sora',sans-serif;color:var(--primary-light);" id="liveContribPct">${pct}%</div>
+        <div style="color:var(--text-secondary);">£${contribAmt}/month to charity</div>
+      </div>
+      <input type="range" class="contribution-slider" id="contribUpdateSlider" min="10" max="50" value="${pct}" step="5" oninput="updateLiveContrib(this.value)" />
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;margin-bottom:16px;">
+        <span>10% min</span><span>50% max</span>
+      </div>
+      <button class="btn-primary btn-full" onclick="saveContribution()">
+        <i class="fas fa-save"></i> Save Contribution
+      </button>
+      <div style="margin-top:12px;">
+        <button class="btn-outline btn-full btn-sm" onclick="makeDonation()">
+          <i class="fas fa-heart"></i> Make Additional Donation
+        </button>
+      </div>`;
+  }
+
+  function updateLiveContrib(val) {
+    document.getElementById('liveContribPct').textContent = val + '%';
+    const monthlyAmount = userSub && userSub.plan === 'yearly' ? 89.99 / 12 : 9.99;
+    const amt = (monthlyAmount * val / 100).toFixed(2);
+    document.getElementById('liveContribPct').nextElementSibling.textContent = `£${amt}/month to charity`;
+  }
+
+  async function saveContribution() {
+    const pct = parseInt(document.getElementById('contribUpdateSlider').value);
+    try {
+      if (userCharity && userCharity.id) {
+        await API.patch('user_charity_selections', userCharity.id, { contribution_percentage: pct });
+        Notify.success('Contribution percentage updated!');
+      }
+    } catch { Notify.error('Failed to save'); }
+  }
+
+  function makeDonation() {
+    Notify.info('Direct donation portal would open here (Stripe payment)');
+  }
+
+  // ===== BROWSE CHARITIES =====
+  async function loadCharitiesBrowse() {
+    if (!allCharities.length) await loadCharityData();
+    filterCharities();
+  }
+
+  function filterCharities() {
+    const query = (document.getElementById('charitySearchInput')?.value || '').toLowerCase();
+    let filtered = allCharities.filter(c => {
+      const matchesSearch = !query || c.name.toLowerCase().includes(query) || c.short_description?.toLowerCase().includes(query);
+      const matchesCat = currentCategoryFilter === 'all' || c.category === currentCategoryFilter;
+      return matchesSearch && matchesCat;
+    });
+    renderCharityGrid(filtered);
+  }
+
+  function setCategoryFilter(cat, btn) {
+    currentCategoryFilter = cat;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    filterCharities();
+  }
+
+  function renderCharityGrid(charities) {
+    const grid = document.getElementById('charityBrowseGrid');
+    if (!charities.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);">No charities found</div>';
+      return;
+    }
+    grid.innerHTML = charities.map(c => `
+      <div class="charity-card" onclick="openCharity('${c.id}')">
+        <div class="charity-card-img">
+          <img src="${c.image_url}" alt="${c.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200/6366f1/white?text=${encodeURIComponent(c.name)}'" />
+          ${c.is_featured ? '<div style="position:absolute;top:12px;left:12px;background:var(--accent-gold);color:black;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⭐ Featured</div>' : ''}
+        </div>
+        <div class="charity-card-body">
+          <span class="charity-card-cat">${c.category}</span>
+          <div class="charity-card-name">${c.name}</div>
+          <div class="charity-card-desc">${c.short_description}</div>
+          <div class="charity-card-stats">
+            <div class="charity-mini-stat"><div class="charity-mini-stat-val">${formatCurrency(c.total_raised || 0)}</div><div class="charity-mini-stat-lbl">Raised</div></div>
+            <div class="charity-mini-stat"><div class="charity-mini-stat-val">${(c.donor_count || 0).toLocaleString()}</div><div class="charity-mini-stat-lbl">Donors</div></div>
+            <div class="charity-mini-stat"><div class="charity-mini-stat-val">${c.founded_year || '—'}</div><div class="charity-mini-stat-lbl">Founded</div></div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openCharity(id) { window.location.href = `charity.html?id=${id}`; }
+
+  // ===== PROFILE =====
+  function loadProfile() {
+    document.getElementById('profileName').value = currentUser.name || '';
+    document.getElementById('profileEmail').value = currentUser.email || '';
+    document.getElementById('profilePhone').value = currentUser.phone || '';
+    if (currentUser.country) {
+      document.getElementById('profileCountry').value = currentUser.country;
+    }
+  }
+
+  async function updateProfile(e) {
+    e.preventDefault();
+    const name = document.getElementById('profileName').value.trim();
+    const phone = document.getElementById('profilePhone').value.trim();
+    const country = document.getElementById('profileCountry').value;
+    
+    try {
+      const updated = await API.patch('users', currentUser.id, { name, phone, country });
+      Auth.login({ ...currentUser, name, phone, country });
+      document.getElementById('sidebarName').textContent = name;
+      Notify.success('Profile updated successfully!');
+    } catch { Notify.error('Failed to update profile'); }
+  }
+
+  async function changePassword() {
+    const current = document.getElementById('currentPass').value;
+    const newP = document.getElementById('newPass').value;
+    const confirm = document.getElementById('confirmPass').value;
+    
+    if (!current || current !== currentUser.password_hash) { Notify.error('Current password is incorrect'); return; }
+    if (!Validate.password(newP)) { Notify.error('New password must be at least 8 characters'); return; }
+    if (newP !== confirm) { Notify.error('Passwords do not match'); return; }
+    
+    try {
+      await API.patch('users', currentUser.id, { password_hash: newP });
+      Auth.login({ ...currentUser, password_hash: newP });
+      ['currentPass', 'newPass', 'confirmPass'].forEach(id => document.getElementById(id).value = '');
+      Notify.success('Password updated successfully!');
+    } catch { Notify.error('Failed to update password'); }
+  }
+
+  // ===== UPLOAD PROOF =====
+  function openUploadProof(winnerId) {
+    document.getElementById('proofWinnerId').value = winnerId;
+    Modal.open('uploadProofModal');
+  }
+
+  function handleProofFile(e) {
+    const file = e.target.files[0];
+    if (file) {
+      document.getElementById('uploadPreview').style.display = 'block';
+      document.getElementById('uploadFileName').textContent = file.name;
+    }
+  }
+
+  async function submitProof() {
+    const winnerId = document.getElementById('proofWinnerId').value;
+    const file = document.getElementById('proofFile').files[0];
+    
+    if (!file) { Notify.error('Please select a file to upload'); return; }
+    
+    try {
+      // Simulate file upload URL (in production, upload to Supabase Storage)
+      const proofUrl = `https://storage.example.com/proofs/${winnerId}_${Date.now()}.${file.name.split('.').pop()}`;
+      
+      await API.patch('winners', winnerId, {
+        proof_url: proofUrl,
+        payment_status: 'pending'
+      });
+      
+      Modal.close('uploadProofModal');
+      Notify.success('Proof uploaded! Admin will review within 48 hours.');
+      loadWinningsSection();
+    } catch { Notify.error('Failed to upload proof'); }
+  }
+
+  // ===== STRIPE WEBHOOK SIMULATOR =====
+  async function simulateWebhook(eventType) {
+    const btn = event?.currentTarget;
+    if (btn) { btn.disabled = true; }
+    try {
+      await StripeWebhooks.simulateEvent(eventType);
+      SubscriptionGuard.clearCache();
+      await loadSubscription();
+      await loadSubDetails();
+    } catch (err) {
+      Notify.error('Simulation failed: ' + err.message);
+    } finally {
+      if (btn) { btn.disabled = false; }
+    }
+  }
+
+  // ===== ACCESS CONTROL — GATE SCORE ENTRY =====
+  // Override submitScore to check subscription
+  const _originalSubmitScore = typeof submitScore !== 'undefined' ? submitScore : null;
+  async function submitScoreWithGuard() {
+    const status = await SubscriptionGuard.validate(currentUser.id);
+    if (!status.canAccess) {
+      SubscriptionGuard.showUpgradeModal('score logging', status);
+      Modal.close('addScoreModal');
+      return;
+    }
+    if (_originalSubmitScore) return _originalSubmitScore();
+    
+    // Inline submit logic
+    const score = document.getElementById('newScore').value;
+    const date = document.getElementById('newScoreDate').value;
+    const course = document.getElementById('newScoreCourse').value;
+    if (!Validate.score(score)) { Notify.error('Score must be between 1 and 45'); return; }
+    if (!date) { Notify.error('Please select the date played'); return; }
+    try {
+      await ScoreManager.addScore(currentUser.id, {
+        score: parseInt(score), played_at: new Date(date).toISOString(), course_name: course
+      });
+      Modal.close('addScoreModal');
+      document.getElementById('newScore').value = '';
+      document.getElementById('newScoreDate').value = '';
+      document.getElementById('newScoreCourse').value = '';
+      Notify.success('Score added!');
+      await loadScores();
+    } catch (e) { Notify.error('Failed to add score: ' + e.message); }
+  }
+
+  // ===== COUNTDOWN =====
+  function updateCountdown() {
+    const now = new Date();
+    const nextDraw = new Date(now.getFullYear(), now.getMonth() + 1, 0, 20, 0, 0);
+    const diff = nextDraw - now;
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      ['ddDays', 'ddHours', 'ddMins'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = String([days, hours, mins][i]).padStart(2, '0');
+      });
+    }
+  }
+
+  // ===== INIT =====
+  init();
+</script>
+</body>
+</html>

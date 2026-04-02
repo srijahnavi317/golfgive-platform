@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription Confirmed — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    body { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .success-page {
+      position: relative; min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 40px 24px;
+    }
+    .success-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+    .success-orb-1 {
+      position: absolute; width: 600px; height: 600px;
+      border-radius: 50%; filter: blur(100px);
+      background: radial-gradient(circle, rgba(99,102,241,0.2), transparent);
+      top: -100px; left: -100px;
+    }
+    .success-orb-2 {
+      position: absolute; width: 400px; height: 400px;
+      border-radius: 50%; filter: blur(80px);
+      background: radial-gradient(circle, rgba(16,185,129,0.15), transparent);
+      bottom: -50px; right: -50px;
+    }
+    .success-card {
+      position: relative; z-index: 1;
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 24px; padding: 48px; max-width: 600px; width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+    }
+    .success-icon-ring {
+      width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 28px;
+      background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05));
+      border: 2px solid rgba(16,185,129,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px; animation: pop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .confetti-anim { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+    .success-title { font-size: 32px; font-weight: 900; font-family: 'Sora', sans-serif; margin-bottom: 12px; }
+    .success-subtitle { color: var(--text-secondary); font-size: 16px; line-height: 1.6; margin-bottom: 32px; }
+    .success-details {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; text-align: left;
+    }
+    .success-detail-item {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px;
+    }
+    .success-detail-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .success-detail-value { font-size: 16px; font-weight: 700; }
+    .success-steps { text-align: left; margin-bottom: 32px; }
+    .success-step {
+      display: flex; align-items: flex-start; gap: 14px; padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .success-step:last-child { border-bottom: none; }
+    .success-step-num {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: white;
+    }
+    .success-step-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+    .success-step-desc { font-size: 13px; color: var(--text-secondary); }
+    .loading-state { text-align: center; padding: 40px; }
+    .error-state { text-align: center; padding: 40px; }
+  </style>
+</head>
+<body>
+
+<div class="success-page">
+  <div class="success-bg">
+    <div class="success-orb-1"></div>
+    <div class="success-orb-2"></div>
+  </div>
+  
+  <!-- Loading state -->
+  <div class="success-card" id="loadingCard">
+    <div class="loading-state">
+      <div class="spinner" style="margin: 0 auto 20px; width: 48px; height: 48px; border-width: 3px;"></div>
+      <h2 style="font-size: 20px; margin-bottom: 8px;">Activating your subscription...</h2>
+      <p style="color: var(--text-secondary);">Please wait while we confirm your payment with Stripe.</p>
+    </div>
+  </div>
+
+  <!-- Success state -->
+  <div class="success-card" id="successCard" style="display:none;">
+    <canvas class="confetti-anim" id="confettiCanvas"></canvas>
+    
+    <div class="success-icon-ring">🎉</div>
+    
+    <h1 class="success-title">You're All Set!</h1>
+    <p class="success-subtitle">
+      Welcome to GolfGive! Your subscription is now <strong style="color:var(--accent-green);">active</strong>.<br />
+      Every round you play is now a chance to win prizes and support charity.
+    </p>
+
+    <!-- Subscription details -->
+    <div class="success-details" id="successDetails">
+      <div class="success-detail-item">
+        <div class="success-detail-label">Plan</div>
+        <div class="success-detail-value" id="detailPlan">Monthly</div>
+      </div>
+      <div class="success-detail-item">
+        <div class="success-detail-label">Amount</div>
+        <div class="success-detail-value" id="detailAmount">£9.99/month</div>
+      </div>
+      <div class="success-detail-item">
+        <div class="success-detail-label">Status</div>
+        <div class="success-detail-value" style="color:var(--accent-green);">✓ Active</div>
+      </div>
+      <div class="success-detail-item">
+        <div class="success-detail-label">Next Renewal</div>
+        <div class="success-detail-value" id="detailRenewal">—</div>
+      </div>
+    </div>
+
+    <!-- What to do next -->
+    <div class="success-steps">
+      <div style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:12px;">What to do next</div>
+      <div class="success-step">
+        <div class="success-step-num">1</div>
+        <div>
+          <div class="success-step-title">Log Your Golf Scores</div>
+          <div class="success-step-desc">Add your 5 most recent Stableford scores (1–45) to enter the monthly draw.</div>
+        </div>
+      </div>
+      <div class="success-step">
+        <div class="success-step-num">2</div>
+        <div>
+          <div class="success-step-title">Choose Your Charity</div>
+          <div class="success-step-desc">Set which charity you want your contribution to support from your dashboard.</div>
+        </div>
+      </div>
+      <div class="success-step">
+        <div class="success-step-num">3</div>
+        <div>
+          <div class="success-step-title">Wait for Draw Day</div>
+          <div class="success-step-desc">At the end of each month, 5 winning numbers are drawn. Match 3, 4 or 5 to win!</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <a href="dashboard.html" class="btn-primary btn-lg" style="text-decoration:none;flex:1;min-width:200px;justify-content:center;display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-th-large"></i> Go to Dashboard
+      </a>
+      <a href="dashboard.html#scores" class="btn-outline btn-lg" style="text-decoration:none;flex:1;min-width:180px;justify-content:center;display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-golf-ball"></i> Add Scores
+      </a>
+    </div>
+
+    <div style="margin-top:20px;font-size:13px;color:var(--text-muted);">
+      <i class="fas fa-envelope" style="margin-right:6px;"></i>
+      A confirmation email has been sent to <span id="confirmEmail" style="color:var(--text-secondary);">your email</span>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div class="success-card" id="errorCard" style="display:none;">
+    <div class="error-state">
+      <div style="font-size:64px;margin-bottom:20px;">⚠️</div>
+      <h2 style="margin-bottom:12px;">Something went wrong</h2>
+      <p style="color:var(--text-secondary);margin-bottom:24px;" id="errorMsg">
+        We couldn't confirm your subscription. Please check your dashboard or contact support.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="dashboard.html#subscription" class="btn-primary" style="text-decoration:none;">View Subscription</a>
+        <a href="pricing.html" class="btn-outline" style="text-decoration:none;">Try Again</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/stripe-config.js"></script>
+<script src="js/stripe-checkout.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = Auth.getUser();
+    
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+      const planType = params.get('plan') || 'monthly';
+
+      // Try to process the checkout success
+      let result = null;
+      
+      // Check for pending checkout in sessionStorage (from demo flow)
+      const pendingRaw = sessionStorage.getItem('stripe_pending_checkout');
+      if (pendingRaw) {
+        try {
+          const pending = JSON.parse(pendingRaw);
+          if (pending.userId === user.id) {
+            result = await StripeCheckout.handleSuccessfulPayment(pending, {});
+          }
+        } catch (e) {
+          console.error('Error processing pending checkout:', e);
+        }
+      }
+
+      // If sessionId from Stripe redirect (real Stripe flow)
+      if (sessionId && !sessionId.startsWith('cs_demo')) {
+        // In production: verify session with your backend
+        // For demo: find or create subscription
+        const res = await API.get('subscriptions', { limit: 100 });
+        const existing = (res.data || []).find(s => 
+          s.user_id === user.id && s.status === 'active'
+        );
+        
+        if (existing) {
+          result = { success: true, subscription: existing };
+        }
+      }
+
+      // Load current subscription to show details
+      const subsRes = await API.get('subscriptions', { limit: 100 });
+      const userSub = (subsRes.data || []).find(s => 
+        s.user_id === user.id && s.status === 'active'
+      );
+
+      if (userSub) {
+        showSuccessState(userSub, user);
+      } else if (result && result.success) {
+        showSuccessState(result.subscription, user);
+      } else {
+        // Check if subscription exists at all
+        const allSubs = subsRes.data || [];
+        const anySub = allSubs.find(s => s.user_id === user.id);
+        if (anySub) {
+          showSuccessState(anySub, user);
+        } else {
+          showErrorState('No subscription found. If you completed payment, please contact support.');
+        }
+      }
+
+    } catch (err) {
+      console.error('Success page error:', err);
+      showErrorState('An error occurred while confirming your subscription.');
+    }
+  });
+
+  function showSuccessState(subscription, user) {
+    document.getElementById('loadingCard').style.display = 'none';
+    document.getElementById('successCard').style.display = 'block';
+    
+    const planType = subscription?.plan_type || subscription?.plan || 'monthly';
+    const amount = planType === 'yearly' ? '£89.99/year' : '£9.99/month';
+    
+    document.getElementById('detailPlan').textContent = 
+      planType === 'yearly' ? 'Yearly' : 'Monthly';
+    document.getElementById('detailAmount').textContent = amount;
+    document.getElementById('detailRenewal').textContent = 
+      subscription?.current_period_end ? DateHelper.format(subscription.current_period_end) : '—';
+    document.getElementById('confirmEmail').textContent = user?.email || 'your email';
+
+    launchConfetti();
+  }
+
+  function showErrorState(msg) {
+    document.getElementById('loadingCard').style.display = 'none';
+    document.getElementById('errorCard').style.display = 'block';
+    if (msg) document.getElementById('errorMsg').textContent = msg;
+  }
+
+  // Simple confetti animation
+  function launchConfetti() {
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) return;
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const ctx = canvas.getContext('2d');
+    const particles = [];
+    const colors = ['#6366f1', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#3b82f6'];
+    
+    for (let i = 0; i < 80; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: -10,
+        w: Math.random() * 10 + 4,
+        h: Math.random() * 6 + 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: Math.random() * 4 + 2,
+        vx: (Math.random() - 0.5) * 3,
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 8
+      });
+    }
+    
+    let frame = 0;
+    const maxFrames = 120;
+    
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.y += p.vy;
+        p.x += p.vx;
+        p.rotation += p.rotSpeed;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, 1 - frame / maxFrames);
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      frame++;
+      if (frame < maxFrames) requestAnimationFrame(animate);
+    }
+    animate();
+  }
+</script>
+</body>
+</html>

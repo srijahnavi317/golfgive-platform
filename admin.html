@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <style>
+    .admin-badge { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .analytics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; }
+    .draw-mode-toggle { display: flex; gap: 10px; }
+    .mode-btn { padding: 10px 20px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+    .mode-btn.active { background: var(--gradient-primary); border-color: transparent; color: white; }
+    .sim-balls { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+    .sim-ball { width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#al)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#al)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#al)"/>
+          <defs><linearGradient id="al" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+    <div style="margin-top:6px;"><span class="admin-badge"><i class="fas fa-shield-alt"></i> Admin</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Analytics</div>
+    <button class="sidebar-item active" data-section="analytics" onclick="showAdminSection('analytics', this)">
+      <i class="fas fa-chart-line"></i> Analytics
+    </button>
+    <div class="sidebar-section-label" style="margin-top:16px;">Management</div>
+    <button class="sidebar-item" data-section="users" onclick="showAdminSection('users', this)">
+      <i class="fas fa-users"></i> Users
+      <span class="badge-count" id="userCountBadge">—</span>
+    </button>
+    <button class="sidebar-item" data-section="subscriptions" onclick="showAdminSection('subscriptions', this)">
+      <i class="fas fa-credit-card"></i> Subscriptions
+    </button>
+    <button class="sidebar-item" data-section="scores-admin" onclick="showAdminSection('scores-admin', this)">
+      <i class="fas fa-golf-ball"></i> Scores
+    </button>
+    <div class="sidebar-section-label" style="margin-top:16px;">Draws</div>
+    <button class="sidebar-item" data-section="draws-admin" onclick="showAdminSection('draws-admin', this)">
+      <i class="fas fa-drum"></i> Draw Management
+    </button>
+    <button class="sidebar-item" data-section="winners-admin" onclick="showAdminSection('winners-admin', this)">
+      <i class="fas fa-trophy"></i> Winners
+      <span class="badge-count" id="pendingWinnersBadge">—</span>
+    </button>
+    <div class="sidebar-section-label" style="margin-top:16px;">Charities</div>
+    <button class="sidebar-item" data-section="charities-admin" onclick="showAdminSection('charities-admin', this)">
+      <i class="fas fa-heart"></i> Charity Management
+    </button>
+    <div class="sidebar-section-label" style="margin-top:16px;">System</div>
+    <button class="sidebar-item" data-section="payments-admin" onclick="showAdminSection('payments-admin', this)">
+      <i class="fas fa-pound-sign"></i> Payments
+    </button>
+    <a href="dashboard.html" class="sidebar-item">
+      <i class="fas fa-user"></i> User View
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-user-avatar">
+        <img id="adminAvatar" src="" alt="Admin" />
+      </div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="adminName">Admin</div>
+        <div class="sidebar-user-email" id="adminEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d3c393034331d3a32313b3a342b38733e3230">[email&#160;protected]</a></div>
+      </div>
+      <a href="index.html" onclick="Auth.logout()" title="Logout" style="color:var(--text-muted);cursor:pointer;">
+        <i class="fas fa-sign-out-alt"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+
+  <!-- ===== ANALYTICS ===== -->
+  <div class="section-content active" id="sec-analytics">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Analytics Dashboard</h1><p>Platform-wide statistics and insights</p></div>
+      <div class="content-header-right">
+        <button class="btn-primary btn-sm" onclick="refreshAnalytics()"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="analytics-grid" id="analyticsStats">
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-purple"><i class="fas fa-users"></i></div><div class="dash-stat-value" id="aTotal">—</div><div class="dash-stat-label">Total Users</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-green"><i class="fas fa-check-circle"></i></div><div class="dash-stat-value" id="aActive">—</div><div class="dash-stat-label">Active Subscribers</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-gold"><i class="fas fa-pound-sign"></i></div><div class="dash-stat-value" id="aPrizePool">—</div><div class="dash-stat-label">Monthly Prize Pool</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-blue"><i class="fas fa-heart"></i></div><div class="dash-stat-value" id="aCharity">—</div><div class="dash-stat-label">Total Charity Raised</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+        <div class="card">
+          <div class="card-head"><h3>Subscription Distribution</h3></div>
+          <div class="card-body" style="height:240px;position:relative;">
+            <canvas id="subChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Prize Pool Breakdown</h3></div>
+          <div class="card-body" style="height:240px;position:relative;">
+            <canvas id="prizeChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+        <div class="card">
+          <div class="card-head"><h3>Draw Stats</h3></div>
+          <div class="card-body" id="drawStats"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Top Charities</h3></div>
+          <div class="card-body" id="charityStats"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Revenue Metrics</h3></div>
+          <div class="card-body" id="revenueStats"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== USERS ===== -->
+  <div class="section-content" id="sec-users">
+    <div class="content-header">
+      <div class="content-header-left"><h1>User Management</h1><p>View, edit and manage all platform users</p></div>
+      <div class="content-header-right">
+        <button class="btn-primary" onclick="Modal.open('addUserModal')"><i class="fas fa-plus"></i> Add User</button>
+      </div>
+    </div>
+    <div class="content-body">
+      <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+        <div class="search-bar" style="flex:1;min-width:240px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="userSearch" placeholder="Search users..." oninput="filterUsers()" />
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setUserFilter('all', this)">All</button>
+          <button class="filter-tab" onclick="setUserFilter('admin', this)">Admin</button>
+          <button class="filter-tab" onclick="setUserFilter('user', this)">Users</button>
+          <button class="filter-tab" onclick="setUserFilter('active', this)">Active</button>
+          <button class="filter-tab" onclick="setUserFilter('inactive', this)">Inactive</button>
+        </div>
+      </div>
+      <div class="card">
+        <div>
+          <table class="data-table" id="usersTable">
+            <thead>
+              <tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Country</th><th>Joined</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SUBSCRIPTIONS ===== -->
+  <div class="section-content" id="sec-subscriptions">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Subscriptions</h1><p>Monitor all subscription states and Stripe billing</p></div>
+    </div>
+    <div class="content-body">
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px;" id="subSummary">
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-green"><i class="fas fa-check-circle"></i></div><div class="dash-stat-value" id="subActiveCount">—</div><div class="dash-stat-label">Active</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-gold"><i class="fas fa-clock"></i></div><div class="dash-stat-value" id="subExpiredCount">—</div><div class="dash-stat-label">Expired</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-blue"><i class="fas fa-times"></i></div><div class="dash-stat-value" id="subCancelledCount">—</div><div class="dash-stat-label">Cancelled</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-purple"><i class="fas fa-exclamation-circle"></i></div><div class="dash-stat-value" id="subPastDueCount">—</div><div class="dash-stat-label">Past Due</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-green"><i class="fas fa-pound-sign"></i></div><div class="dash-stat-value" id="subMRR">£—</div><div class="dash-stat-label">Est. MRR</div></div>
+      </div>
+      
+      <!-- Stripe Events Log -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-head">
+          <h3><i class="fab fa-stripe" style="margin-right:8px;color:#635bff;"></i>Recent Stripe Events</h3>
+          <button class="btn-outline btn-sm" onclick="loadStripeEvents()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+        <div id="stripeEventsLog">
+          <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:14px;">Click refresh to load events</div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-head">
+          <h3>All Subscriptions</h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-outline btn-sm" onclick="loadAdminSubscriptions()"><i class="fas fa-sync"></i></button>
+          </div>
+        </div>
+        <div>
+          <table class="data-table">
+            <thead><tr><th>User</th><th>Plan</th><th>Status</th><th>Period End</th><th>Amount</th><th>Stripe Customer</th><th>Card</th></tr></thead>
+            <tbody id="subsTableBody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCORES ADMIN ===== -->
+  <div class="section-content" id="sec-scores-admin">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Score Management</h1><p>View and edit all user scores</p></div>
+    </div>
+    <div class="content-body">
+      <div class="card">
+        <div>
+          <table class="data-table">
+            <thead><tr><th>User</th><th>Score</th><th>Date Played</th><th>Course</th><th>Actions</th></tr></thead>
+            <tbody id="scoresAdminBody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DRAWS ADMIN ===== -->
+  <div class="section-content" id="sec-draws-admin">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Draw Management</h1><p>Run, simulate and publish monthly prize draws</p></div>
+    </div>
+    <div class="content-body">
+      <!-- Draw Control Panel -->
+      <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.08));border-color:rgba(99,102,241,0.2);">
+        <div class="card-head"><h3>Draw Control Panel — April 2026</h3></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;">Draw Mode</div>
+              <div class="draw-mode-toggle">
+                <button class="mode-btn active" id="modeRandom" onclick="setDrawMode('random')">
+                  🎲 Random (Lottery)
+                </button>
+                <button class="mode-btn" id="modeAlgo" onclick="setDrawMode('algorithmic')">
+                  🧮 Algorithmic
+                </button>
+              </div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:8px;" id="modeDescription">
+                Random mode: 5 numbers drawn by pure chance, lottery-style.
+              </div>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;">Prize Pool</div>
+              <div style="font-size:36px;font-weight:900;color:var(--accent-gold);font-family:'Sora',sans-serif;" id="adminPrizePool">£1,440</div>
+              <div style="font-size:12px;color:var(--text-muted);">incl. £480 jackpot rollover</div>
+            </div>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn-outline" onclick="runSimulation()">
+              <i class="fas fa-flask"></i> Run Simulation
+            </button>
+            <button class="btn-primary" id="publishDrawBtn" onclick="publishDraw()" style="display:none;">
+              <i class="fas fa-bullhorn"></i> Publish Draw Results
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulation Results -->
+      <div class="card" id="simulationResults" style="display:none;margin-bottom:20px;">
+        <div class="card-head">
+          <h3>Simulation Results</h3>
+          <span class="badge badge-pending">Simulation Only</span>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom:16px;">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">DRAWN NUMBERS</div>
+            <div class="sim-balls" id="simBalls"></div>
+          </div>
+          <div id="simWinners"></div>
+          <div style="margin-top:16px;padding:12px 16px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;font-size:13px;color:var(--accent-gold);">
+            ⚠️ This is a simulation. No prizes are awarded until you publish official results.
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Draws -->
+      <div class="card">
+        <div class="card-head"><h3>Draw History</h3></div>
+        <div>
+          <table class="data-table">
+            <thead><tr><th>Month</th><th>Mode</th><th>Numbers</th><th>Pool</th><th>Status</th><th>Date Run</th><th>Actions</th></tr></thead>
+            <tbody id="drawsAdminBody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WINNERS ADMIN ===== -->
+  <div class="section-content" id="sec-winners-admin">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Winners Management</h1><p>Verify proofs and manage prize payouts</p></div>
+    </div>
+    <div class="content-body">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-gold"><i class="fas fa-trophy"></i></div><div class="dash-stat-value" id="wTotalCount">—</div><div class="dash-stat-label">Total Winners</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-blue"><i class="fas fa-clock"></i></div><div class="dash-stat-value" id="wPendingCount">—</div><div class="dash-stat-label">Pending Verification</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-green"><i class="fas fa-check"></i></div><div class="dash-stat-value" id="wPaidCount">—</div><div class="dash-stat-label">Paid Out</div></div>
+        <div class="dash-stat"><div class="dash-stat-icon stat-icon-purple"><i class="fas fa-pound-sign"></i></div><div class="dash-stat-value" id="wTotalPaid">—</div><div class="dash-stat-label">Total Paid</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3>All Winners</h3>
+          <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterWinners('all', this)">All</button>
+            <button class="filter-tab" onclick="filterWinners('pending', this)">Pending</button>
+            <button class="filter-tab" onclick="filterWinners('verified', this)">Verified</button>
+            <button class="filter-tab" onclick="filterWinners('paid', this)">Paid</button>
+          </div>
+        </div>
+        <div>
+          <table class="data-table">
+            <thead><tr><th>Winner</th><th>Draw</th><th>Match</th><th>Prize</th><th>Proof</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="winnersAdminBody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHARITIES ADMIN ===== -->
+  <div class="section-content" id="sec-charities-admin">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Charity Management</h1><p>Add, edit and manage charity listings</p></div>
+      <div class="content-header-right">
+        <button class="btn-primary" onclick="Modal.open('addCharityModal')"><i class="fas fa-plus"></i> Add Charity</button>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="charity-grid" id="adminCharityGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:60px;"><div class="spinner" style="margin:0 auto;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAYMENTS ADMIN ===== -->
+  <div class="section-content" id="sec-payments-admin">
+    <div class="content-header">
+      <div class="content-header-left"><h1>Payments</h1><p>Track all prize payment transactions</p></div>
+    </div>
+    <div class="content-body">
+      <div class="card">
+        <div>
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Processed</th><th>Actions</th></tr></thead>
+            <tbody id="paymentsAdminBody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Charity Modal -->
+<div class="modal-overlay" id="addCharityModal">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="charityModalTitle">Add New Charity</h3>
+      <button class="modal-close" onclick="Modal.close('addCharityModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <input type="hidden" id="editCharityId" />
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Charity Name</label>
+        <input type="text" id="charityName" class="form-control" placeholder="e.g. Cancer Research UK" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select id="charityCategory" class="form-control">
+          <option value="health">Health</option>
+          <option value="children">Children</option>
+          <option value="environment">Environment</option>
+          <option value="sports">Sports</option>
+          <option value="community">Community</option>
+          <option value="education">Education</option>
+          <option value="elderly">Elderly</option>
+          <option value="animals">Animals</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Short Description</label>
+      <input type="text" id="charityShortDesc" class="form-control" placeholder="One-line description" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Full Description</label>
+      <textarea id="charityDesc" class="form-control" rows="3" style="resize:vertical;"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Image URL</label>
+        <input type="url" id="charityImageUrl" class="form-control" placeholder="https://..." />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Website URL</label>
+        <input type="url" id="charityWebsite" class="form-control" placeholder="https://..." />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Country</label>
+        <select id="charityCountry" class="form-control">
+          <option value="UK">United Kingdom</option>
+          <option value="IE">Ireland</option>
+          <option value="US">United States</option>
+          <option value="AU">Australia</option>
+          <option value="Global">Global</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Founded Year</label>
+        <input type="number" id="charityFounded" class="form-control" placeholder="e.g. 2002" />
+      </div>
+    </div>
+    <div style="display:flex;gap:20px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;">
+        <input type="checkbox" id="charityFeatured" style="accent-color:var(--primary);" />
+        Featured on homepage
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;">
+        <input type="checkbox" id="charityActive" checked style="accent-color:var(--primary);" />
+        Active / Visible
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="Modal.close('addCharityModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveCharity()"><i class="fas fa-save"></i> Save Charity</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit User</h3>
+      <button class="modal-close" onclick="Modal.close('editUserModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <input type="hidden" id="editUserId" />
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" id="editUserName" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" id="editUserEmail" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Role</label>
+      <select id="editUserRole" class="form-control">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select id="editUserActive" class="form-control">
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="Modal.close('editUserModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveUser()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Winner Review Modal -->
+<div class="modal-overlay" id="winnerReviewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Review Winner Proof</h3>
+      <button class="modal-close" onclick="Modal.close('winnerReviewModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <input type="hidden" id="reviewWinnerId" />
+    <div id="winnerReviewContent"></div>
+    <div class="form-group" style="margin-top:16px;">
+      <label class="form-label">Admin Notes</label>
+      <textarea id="adminNotesInput" class="form-control" rows="2" placeholder="Optional notes..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-danger" onclick="rejectWinner()"><i class="fas fa-times"></i> Reject</button>
+      <button class="btn-success" onclick="approveWinner()"><i class="fas fa-check"></i> Approve & Verify</button>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // Auth guard
+  const adminUser = Auth.getUser();
+  if (!adminUser || adminUser.role !== 'admin') { window.location.href = 'login.html'; throw new Error('Redirect'); }
+  let allUsers = [];
+  let allSubs = [];
+  let allWinners = [];
+  let allDraws = [];
+  let allScores = [];
+  let allCharities = [];
+  let allPayments = [];
+  let currentDrawMode = 'random';
+  let simulatedNumbers = null;
+  let currentWinnerFilter = 'all';
+  let currentUserFilter = 'all';
+
+  // Init admin
+  async function initAdmin() {
+    if (!adminUser) { window.location.href = 'login.html'; return; }
+    document.getElementById('adminName').textContent = adminUser.name || 'Admin';
+    document.getElementById('adminEmail').textContent = adminUser.email || 'admin@golfgive.com';
+    document.getElementById('adminAvatar').src = adminUser.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${adminUser.name || 'admin'}`;
+    
+    await Promise.all([
+      loadAllData(),
+      loadAnalytics()
+    ]);
+  }
+
+  async function loadAllData() {
+    try {
+      const [usersRes, subsRes, winnersRes, drawsRes, scoresRes, charRes, paymentsRes] = await Promise.all([
+        API.get('users', { limit: 200 }),
+        API.get('subscriptions', { limit: 200 }),
+        API.get('winners', { limit: 200 }),
+        API.get('draws', { limit: 50 }),
+        API.get('scores', { limit: 500 }),
+        API.get('charities', { limit: 50 }),
+        API.get('payments', { limit: 200 })
+      ]);
+      allUsers = usersRes.data || [];
+      allSubs = subsRes.data || [];
+      allWinners = winnersRes.data || [];
+      allDraws = drawsRes.data || [];
+      allScores = scoresRes.data || [];
+      allCharities = charRes.data || [];
+      allPayments = paymentsRes.data || [];
+      
+      // Update badge counts
+      document.getElementById('userCountBadge').textContent = allUsers.filter(u=>u.is_active).length;
+      document.getElementById('pendingWinnersBadge').textContent = allWinners.filter(w=>w.payment_status==='pending').length;
+    } catch (e) { console.error(e); }
+  }
+
+  // ===== SECTION NAVIGATION =====
+  function showAdminSection(section, btn) {
+    document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(`sec-${section}`).classList.add('active');
+    if (btn) btn.classList.add('active');
+    
+    if (section === 'users') renderUsers();
+    if (section === 'subscriptions') { renderSubscriptions(); loadStripeEvents(); }
+    if (section === 'scores-admin') renderScoresAdmin();
+    if (section === 'draws-admin') renderDrawsAdmin();
+    if (section === 'winners-admin') renderWinnersAdmin();
+    if (section === 'charities-admin') renderCharitiesAdmin();
+    if (section === 'payments-admin') renderPaymentsAdmin();
+    if (section === 'analytics') loadAnalytics();
+  }
+
+  // ===== ANALYTICS =====
+  let subChart = null, prizeChart = null;
+
+  async function loadAnalytics() {
+    await loadAllData();
+    
+    const active = allSubs.filter(s => s.status === 'active').length;
+    const monthly = allSubs.filter(s => s.plan === 'monthly' && s.status === 'active').length;
+    const yearly = allSubs.filter(s => s.plan === 'yearly' && s.status === 'active').length;
+    const totalPool = (monthly * 9.99) + (yearly * 89.99 / 12);
+    const totalCharity = allWinners.reduce((a, w) => a + (w.prize_amount || 0), 0);
+    
+    document.getElementById('aTotal').textContent = allUsers.length;
+    document.getElementById('aActive').textContent = active;
+    document.getElementById('aPrizePool').textContent = formatCurrency(totalPool);
+    document.getElementById('aCharity').textContent = formatCurrency(totalCharity);
+    
+    // Charts
+    const subCtx = document.getElementById('subChart').getContext('2d');
+    if (subChart) subChart.destroy();
+    subChart = new Chart(subCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Monthly Active', 'Yearly Active', 'Expired', 'Cancelled'],
+        datasets: [{
+          data: [monthly, yearly, allSubs.filter(s=>s.status==='expired').length, allSubs.filter(s=>s.status==='cancelled').length],
+          backgroundColor: ['#6366f1', '#8b5cf6', '#f59e0b', '#ef4444'],
+          borderWidth: 0
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12, font: { size: 12 } } } } }
+    });
+    
+    const prizeCtx = document.getElementById('prizeChart').getContext('2d');
+    if (prizeChart) prizeChart.destroy();
+    prizeChart = new Chart(prizeCtx, {
+      type: 'bar',
+      data: {
+        labels: ['5-Match (40%)', '4-Match (35%)', '3-Match (25%)'],
+        datasets: [{
+          label: 'Prize Amount',
+          data: [Math.floor(totalPool * 0.4), Math.floor(totalPool * 0.35), Math.floor(totalPool * 0.25)],
+          backgroundColor: ['#f59e0b', '#94a3b8', '#cd7f32'],
+          borderRadius: 6
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { display: false } }, y: { ticks: { color: '#94a3b8', callback: v => '£' + v }, grid: { color: 'rgba(255,255,255,0.05)' } } } }
+    });
+    
+    // Draw stats
+    document.getElementById('drawStats').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Total Draws</span><strong>${allDraws.length}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Published</span><strong>${allDraws.filter(d=>d.status==='published').length}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Pending</span><strong>${allDraws.filter(d=>d.status==='draft').length}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Total Winners</span><strong>${allWinners.length}</strong></div>
+      </div>`;
+    
+    // Charity stats
+    const charityTotals = {};
+    // Sum by donations (demo: use winner amounts proportionally)
+    allCharities.forEach(c => { charityTotals[c.name] = c.total_raised || 0; });
+    const sortedCharities = allCharities.sort((a,b) => (b.total_raised||0) - (a.total_raised||0));
+    document.getElementById('charityStats').innerHTML = sortedCharities.slice(0,4).map(c => `
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span style="color:var(--text-secondary);font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.name}</span>
+        <strong style="color:var(--accent-green);margin-left:8px;">${formatCurrency(c.total_raised||0)}</strong>
+      </div>
+    `).join('');
+    
+    // Revenue
+    const monthlyRev = monthly * 9.99;
+    const yearlyRev = yearly * 89.99;
+    document.getElementById('revenueStats').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Monthly Revenue</span><strong>${formatCurrency(monthlyRev)}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Yearly Revenue</span><strong>${formatCurrency(yearlyRev)}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Prize Pool</span><strong>${formatCurrency(totalPool)}</strong></div>
+        <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px;margin-top:4px;"><span style="color:var(--text-secondary);">Charity (avg 15%)</span><strong style="color:var(--accent-green);">${formatCurrency(totalPool * 0.15)}</strong></div>
+      </div>`;
+  }
+
+  async function refreshAnalytics() { await loadAnalytics(); Notify.success('Analytics refreshed'); }
+
+  // ===== USERS =====
+  function renderUsers() {
+    const tbody = document.getElementById('usersTableBody');
+    let filtered = [...allUsers];
+    
+    const search = (document.getElementById('userSearch')?.value || '').toLowerCase();
+    if (search) filtered = filtered.filter(u => u.name?.toLowerCase().includes(search) || u.email?.toLowerCase().includes(search));
+    
+    if (currentUserFilter === 'admin') filtered = filtered.filter(u => u.role === 'admin');
+    else if (currentUserFilter === 'user') filtered = filtered.filter(u => u.role === 'user');
+    else if (currentUserFilter === 'active') filtered = filtered.filter(u => u.is_active);
+    else if (currentUserFilter === 'inactive') filtered = filtered.filter(u => !u.is_active);
+    
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No users found</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = filtered.map(u => {
+      const sub = allSubs.find(s => s.user_id === u.id);
+      return `
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <img src="${u.avatar || 'https://via.placeholder.com/32'}" style="width:32px;height:32px;border-radius:50%;background:var(--bg-card);" onerror="this.src='https://via.placeholder.com/32/6366f1/white?text=${encodeURIComponent((u.name||'U')[0])}'" />
+              <div>
+                <div style="font-weight:600;font-size:13px;">${u.name}</div>
+                <div style="font-size:11px;color:var(--text-muted);">${sub ? sub.plan : 'No sub'}</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:13px;">${u.email}</td>
+          <td><span class="badge ${u.role==='admin'?'badge-rejected':'badge-monthly'}">${u.role}</span></td>
+          <td><span class="badge ${u.is_active?'badge-active':'badge-inactive'}">${u.is_active?'Active':'Inactive'}</span></td>
+          <td style="font-size:13px;">${u.country || '—'}</td>
+          <td style="font-size:12px;color:var(--text-muted);">${DateHelper.format(u.created_at)}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-outline btn-sm" onclick="openEditUser('${u.id}')">Edit</button>
+              <button class="btn-danger btn-sm" onclick="toggleUserStatus('${u.id}', ${u.is_active})">${u.is_active?'Disable':'Enable'}</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function filterUsers() { renderUsers(); }
+  
+  function setUserFilter(filter, btn) {
+    currentUserFilter = filter;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderUsers();
+  }
+
+  function openEditUser(id) {
+    const user = allUsers.find(u => u.id === id);
+    if (!user) return;
+    document.getElementById('editUserId').value = user.id;
+    document.getElementById('editUserName').value = user.name;
+    document.getElementById('editUserEmail').value = user.email;
+    document.getElementById('editUserRole').value = user.role;
+    document.getElementById('editUserActive').value = String(user.is_active);
+    Modal.open('editUserModal');
+  }
+
+  async function saveUser() {
+    const id = document.getElementById('editUserId').value;
+    const name = document.getElementById('editUserName').value;
+    const email = document.getElementById('editUserEmail').value;
+    const role = document.getElementById('editUserRole').value;
+    const is_active = document.getElementById('editUserActive').value === 'true';
+    
+    try {
+      await API.patch('users', id, { name, email, role, is_active });
+      const idx = allUsers.findIndex(u => u.id === id);
+      if (idx >= 0) allUsers[idx] = { ...allUsers[idx], name, email, role, is_active };
+      Modal.close('editUserModal');
+      Notify.success('User updated successfully');
+      renderUsers();
+    } catch { Notify.error('Failed to update user'); }
+  }
+
+  async function toggleUserStatus(id, current) {
+    try {
+      await API.patch('users', id, { is_active: !current });
+      const idx = allUsers.findIndex(u => u.id === id);
+      if (idx >= 0) allUsers[idx].is_active = !current;
+      Notify.success(`User ${!current ? 'enabled' : 'disabled'}`);
+      renderUsers();
+    } catch { Notify.error('Failed to update'); }
+  }
+
+  // ===== SUBSCRIPTIONS =====
+  function renderSubscriptions() {
+    const tbody = document.getElementById('subsTableBody');
+    const active = allSubs.filter(s => s.status === 'active').length;
+    const expired = allSubs.filter(s => s.status === 'expired').length;
+    const cancelled = allSubs.filter(s => s.status === 'cancelled').length;
+    const pastDue = allSubs.filter(s => s.status === 'past_due').length;
+    
+    // Calculate MRR
+    const activeSubs = allSubs.filter(s => s.status === 'active');
+    const monthlyMRR = activeSubs.filter(s => s.plan_type === 'monthly' || s.plan === 'monthly').length * 9.99;
+    const yearlyMRR = activeSubs.filter(s => s.plan_type === 'yearly' || s.plan === 'yearly').length * (89.99 / 12);
+    const totalMRR = (monthlyMRR + yearlyMRR).toFixed(2);
+    
+    document.getElementById('subActiveCount').textContent = active;
+    document.getElementById('subExpiredCount').textContent = expired;
+    document.getElementById('subCancelledCount').textContent = cancelled;
+    if (document.getElementById('subPastDueCount')) document.getElementById('subPastDueCount').textContent = pastDue;
+    if (document.getElementById('subMRR')) document.getElementById('subMRR').textContent = '£' + totalMRR;
+    
+    const statusColors = {
+      active: 'var(--accent-green)', cancelled: '#f59e0b', expired: '#6b7280',
+      past_due: '#ef4444', trialing: '#6366f1', inactive: '#6b7280'
+    };
+    
+    tbody.innerHTML = allSubs.map(s => {
+      const user = allUsers.find(u => u.id === s.user_id);
+      const planType = s.plan_type || s.plan;
+      return `
+        <tr>
+          <td style="font-size:13px;">${user ? user.name : s.user_id.slice(0, 16) + '...'}</td>
+          <td>
+            <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(99,102,241,0.1);
+              color:var(--primary-light);padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700;text-transform:capitalize;">
+              ${planType === 'yearly' ? '🗓️' : '📅'} ${planType || '—'}
+            </span>
+          </td>
+          <td>
+            <span style="background:${statusColors[s.status] || '#6b7280'}20;color:${statusColors[s.status] || '#6b7280'};
+              padding:2px 10px;border-radius:10px;font-size:12px;font-weight:700;">
+              ${s.status}
+            </span>
+          </td>
+          <td style="font-size:13px;">${DateHelper.format(s.current_period_end)}</td>
+          <td style="font-weight:700;color:var(--accent-green);">£${((s.amount||0)/100).toFixed(2)}</td>
+          <td style="font-size:11px;color:var(--text-muted);font-family:monospace;">
+            ${s.stripe_customer_id ? s.stripe_customer_id.slice(0, 20) + '...' : '—'}
+          </td>
+          <td style="font-size:12px;color:var(--text-secondary);">
+            ${s.payment_method_last4 ? `
+              <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:6px;">
+                ${s.payment_method_brand ? s.payment_method_brand.toUpperCase() : ''} ••${s.payment_method_last4}
+              </span>
+            ` : '—'}
+          </td>
+        </tr>`;
+    }).join('');
+    
+    if (!allSubs.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No subscriptions found</td></tr>';
+    }
+  }
+
+  async function loadAdminSubscriptions() {
+    try {
+      const res = await API.get('subscriptions', { limit: 200 });
+      allSubs = res.data || [];
+      renderSubscriptions();
+      Notify.success('Subscriptions refreshed');
+    } catch { Notify.error('Failed to load subscriptions'); }
+  }
+
+  async function loadStripeEvents() {
+    const container = document.getElementById('stripeEventsLog');
+    try {
+      const res = await API.get('stripe_events', { limit: 20 });
+      const events = (res.data || []).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      
+      if (!events.length) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:14px;">No webhook events logged yet</div>';
+        return;
+      }
+      
+      const typeColors = {
+        'checkout.session.completed': '#10b981',
+        'invoice.paid': '#6366f1',
+        'invoice.payment_failed': '#ef4444',
+        'customer.subscription.deleted': '#f59e0b',
+        'customer.subscription.updated': '#3b82f6'
+      };
+      
+      container.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>Event Type</th><th>Status</th><th>Stripe Event ID</th><th>Subscription</th><th>Time</th></tr></thead>
+            <tbody>
+              ${events.map(evt => `
+                <tr>
+                  <td>
+                    <span style="background:${typeColors[evt.event_type] || '#6b7280'}20;
+                      color:${typeColors[evt.event_type] || '#6b7280'};
+                      padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">
+                      ${evt.event_type}
+                    </span>
+                  </td>
+                  <td><span class="badge badge-${evt.status === 'processed' ? 'active' : 'expired'}">${evt.status}</span></td>
+                  <td style="font-size:11px;color:var(--text-muted);font-family:monospace;">${evt.stripe_event_id || '—'}</td>
+                  <td style="font-size:11px;color:var(--text-muted);font-family:monospace;">${(evt.subscription_id || '—').slice(0, 20)}</td>
+                  <td style="font-size:12px;color:var(--text-muted);">${DateHelper.relative(evt.created_at)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } catch (e) {
+      container.innerHTML = '<div style="color:var(--text-muted);font-size:14px;padding:20px;">Failed to load events</div>';
+    }
+  }
+
+  async function cancelSub(id) {
+    if (!confirm('Cancel this subscription?')) return;
+    try {
+      await API.patch('subscriptions', id, { status: 'cancelled', cancelled_at: new Date().toISOString() });
+      const idx = allSubs.findIndex(s => s.id === id);
+      if (idx >= 0) allSubs[idx].status = 'cancelled';
+      Notify.success('Subscription cancelled');
+      renderSubscriptions();
+    } catch { Notify.error('Failed'); }
+  }
+
+  async function reactivateSub(id) {
+    try {
+      const now = new Date();
+      const end = new Date(now); end.setMonth(end.getMonth() + 1);
+      await API.patch('subscriptions', id, { status: 'active', current_period_start: now.toISOString(), current_period_end: end.toISOString() });
+      const idx = allSubs.findIndex(s => s.id === id);
+      if (idx >= 0) { allSubs[idx].status = 'active'; allSubs[idx].current_period_end = end.toISOString(); }
+      Notify.success('Subscription reactivated');
+      renderSubscriptions();
+    } catch { Notify.error('Failed'); }
+  }
+
+  // ===== SCORES ADMIN =====
+  function renderScoresAdmin() {
+    const tbody = document.getElementById('scoresAdminBody');
+    const sorted = [...allScores].sort((a,b) => new Date(b.played_at) - new Date(a.played_at));
+    
+    tbody.innerHTML = sorted.map(s => {
+      const user = allUsers.find(u => u.id === s.user_id);
+      return `
+        <tr>
+          <td style="font-size:13px;">${user ? user.name : s.user_id}</td>
+          <td><span style="font-size:20px;font-weight:800;color:var(--primary-light);">${s.score}</span></td>
+          <td>${DateHelper.format(s.played_at)}</td>
+          <td style="font-size:13px;">${s.course_name || '—'}</td>
+          <td>
+            <button class="btn-danger btn-sm" onclick="adminDeleteScore('${s.id}')">Delete</button>
+          </td>
+        </tr>`;
+    }).join('') || '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No scores</td></tr>';
+  }
+
+  async function adminDeleteScore(id) {
+    if (!confirm('Delete this score?')) return;
+    try {
+      await API.delete('scores', id);
+      allScores = allScores.filter(s => s.id !== id);
+      Notify.success('Score deleted');
+      renderScoresAdmin();
+    } catch { Notify.error('Failed'); }
+  }
+
+  // ===== DRAWS ADMIN =====
+  async function renderDrawsAdmin() {
+    const tbody = document.getElementById('drawsAdminBody');
+    const prizePool = await calculatePrizePool();
+    document.getElementById('adminPrizePool').textContent = formatCurrency(prizePool.total + 480);
+    
+    tbody.innerHTML = allDraws.map(d => `
+      <tr>
+        <td style="font-weight:600;">${d.draw_month}</td>
+        <td><span style="font-size:12px;">${d.mode === 'random' ? '🎲 Random' : '🧮 Algorithmic'}</span></td>
+        <td>
+          ${d.drawn_numbers && d.drawn_numbers.length ? 
+            d.drawn_numbers.map(n => `<span class="draw-ball-sm">${n}</span>`).join(' ') : 
+            '<span style="color:var(--text-muted);">Not drawn</span>'}
+        </td>
+        <td style="font-weight:600;color:var(--accent-gold);">${formatCurrency(d.total_prize_pool || 0)}</td>
+        <td><span class="badge badge-${d.status}">${d.status}</span></td>
+        <td style="font-size:12px;color:var(--text-muted);">${d.drawn_at ? DateHelper.format(d.drawn_at) : '—'}</td>
+        <td>
+          ${d.status === 'draft' ? `<button class="btn-primary btn-sm" onclick="runOfficialDraw('${d.id}')"><i class="fas fa-play"></i> Run Draw</button>` : ''}
+          ${d.status === 'simulated' ? `<button class="btn-success btn-sm" onclick="publishDrawById('${d.id}')"><i class="fas fa-bullhorn"></i> Publish</button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function setDrawMode(mode) {
+    currentDrawMode = mode;
+    document.getElementById('modeRandom').classList.toggle('active', mode === 'random');
+    document.getElementById('modeAlgo').classList.toggle('active', mode === 'algorithmic');
+    document.getElementById('modeDescription').textContent = mode === 'random' ?
+      'Random mode: 5 numbers drawn by pure chance, lottery-style.' :
+      'Algorithmic mode: Numbers weighted by score frequency across all users.';
+  }
+
+  async function runSimulation() {
+    let numbers;
+    if (currentDrawMode === 'random') {
+      numbers = DrawEngine.randomDraw();
+    } else {
+      numbers = DrawEngine.algorithmicDraw(allScores);
+    }
+    simulatedNumbers = numbers;
+    
+    // Display simulation results
+    const resultsDiv = document.getElementById('simulationResults');
+    const ballsDiv = document.getElementById('simBalls');
+    const winnersDiv = document.getElementById('simWinners');
+    
+    resultsDiv.style.display = 'block';
+    document.getElementById('publishDrawBtn').style.display = 'inline-flex';
+    
+    ballsDiv.innerHTML = numbers.map((n, i) => 
+      `<div class="sim-ball" style="animation-delay:${i*0.15}s;">${n}</div>`
+    ).join('');
+    
+    // Find simulated winners
+    const winnerUsers = [];
+    for (const user of allUsers.filter(u => u.role === 'user')) {
+      const scores = allScores.filter(s => s.user_id === user.id);
+      if (scores.length > 0) {
+        const match = DrawEngine.checkMatch(scores, numbers);
+        if (match.matchCount >= 3) {
+          winnerUsers.push({ user, match });
+        }
+      }
+    }
+    
+    if (winnerUsers.length === 0) {
+      winnersDiv.innerHTML = '<div style="font-size:14px;color:var(--text-muted);">No winners in this simulation</div>';
+    } else {
+      winnersDiv.innerHTML = `
+        <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:10px;">SIMULATED WINNERS (${winnerUsers.length})</div>
+        ${winnerUsers.map(({user, match}) => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;margin-bottom:8px;">
+            <div>
+              <div style="font-weight:600;">${user.name}</div>
+              <div style="font-size:12px;color:var(--text-muted);">Matched: ${match.matched.join(', ')}</div>
+            </div>
+            <span class="badge badge-active">${match.matchType}-Match</span>
+          </div>
+        `).join('')}`;
+    }
+    
+    Notify.info(`Simulation complete: ${numbers.join(', ')}`);
+  }
+
+  async function publishDraw() {
+    if (!simulatedNumbers) { await runSimulation(); return; }
+    
+    if (!confirm('Publish these draw results? This will create winner records and notify users.')) return;
+    
+    try {
+      const currentDraw = allDraws.find(d => d.status === 'draft');
+      if (!currentDraw) { Notify.error('No draft draw found'); return; }
+      
+      // Update draw
+      await API.patch('draws', currentDraw.id, {
+        status: 'published',
+        drawn_numbers: simulatedNumbers,
+        mode: currentDrawMode,
+        drawn_at: new Date().toISOString(),
+        run_by: adminUser.id
+      });
+      
+      // Create winner records
+      const prizePool = await calculatePrizePool();
+      const prizes = DrawEngine.calculatePrizes(prizePool.total, currentDraw.jackpot_rollover || 0);
+      
+      let fiveMatchWinners = [], fourMatchWinners = [], threeMatchWinners = [];
+      
+      for (const user of allUsers.filter(u => u.role === 'user')) {
+        const scores = allScores.filter(s => s.user_id === user.id);
+        if (scores.length > 0) {
+          const match = DrawEngine.checkMatch(scores, simulatedNumbers);
+          if (match.matchType === 5) fiveMatchWinners.push({ user, match });
+          else if (match.matchType === 4) fourMatchWinners.push({ user, match });
+          else if (match.matchType === 3) threeMatchWinners.push({ user, match });
+        }
+      }
+      
+      const createWinnerRecords = async (winners, matchType, totalPrize) => {
+        if (!winners.length) return;
+        const share = Math.floor(totalPrize / winners.length);
+        for (const {user, match} of winners) {
+          await API.post('winners', {
+            id: generateId('winner'),
+            draw_id: currentDraw.id,
+            user_id: user.id,
+            match_type: matchType,
+            matched_numbers: match.matched,
+            prize_amount: share,
+            payment_status: 'pending'
+          });
+        }
+      };
+      
+      // Handle jackpot rollover
+      if (fiveMatchWinners.length === 0) {
+        const nextDraw = allDraws.find(d => d.status === 'draft' && d.id !== currentDraw.id);
+        if (nextDraw) {
+          await API.patch('draws', nextDraw.id, { jackpot_rollover: (nextDraw.jackpot_rollover || 0) + prizes.fiveMatch });
+        }
+      } else {
+        await createWinnerRecords(fiveMatchWinners, 5, prizes.fiveMatch);
+      }
+      await createWinnerRecords(fourMatchWinners, 4, prizes.fourMatch);
+      await createWinnerRecords(threeMatchWinners, 3, prizes.threeMatch);
+      
+      await loadAllData();
+      renderDrawsAdmin();
+      document.getElementById('simulationResults').style.display = 'none';
+      document.getElementById('publishDrawBtn').style.display = 'none';
+      simulatedNumbers = null;
+      Notify.success('Draw published! Winners have been notified.');
+    } catch (e) {
+      Notify.error('Failed to publish draw: ' + e.message);
+    }
+  }
+
+  async function runOfficialDraw(drawId) {
+    const draw = allDraws.find(d => d.id === drawId);
+    if (!draw) return;
+    
+    let numbers = currentDrawMode === 'random' ? DrawEngine.randomDraw() : DrawEngine.algorithmicDraw(allScores);
+    
+    try {
+      await API.patch('draws', drawId, {
+        status: 'published',
+        drawn_numbers: numbers,
+        mode: currentDrawMode,
+        drawn_at: new Date().toISOString(),
+        run_by: adminUser.id
+      });
+      
+      const idx = allDraws.findIndex(d => d.id === drawId);
+      if (idx >= 0) {
+        allDraws[idx].status = 'published';
+        allDraws[idx].drawn_numbers = numbers;
+      }
+      
+      Notify.success(`Draw ${draw.draw_month} published with numbers: ${numbers.join(', ')}`);
+      renderDrawsAdmin();
+    } catch { Notify.error('Failed to run draw'); }
+  }
+
+  async function publishDrawById(drawId) { await runOfficialDraw(drawId); }
+
+  // ===== WINNERS ADMIN =====
+  function renderWinnersAdmin() {
+    const tbody = document.getElementById('winnersAdminBody');
+    const wins = allWinners.filter(w => currentWinnerFilter === 'all' || w.payment_status === currentWinnerFilter);
+    
+    const total = allWinners.length;
+    const pending = allWinners.filter(w => w.payment_status === 'pending').length;
+    const paid = allWinners.filter(w => w.payment_status === 'paid').length;
+    const totalPaid = allWinners.filter(w => w.payment_status === 'paid').reduce((s, w) => s + (w.prize_amount || 0), 0);
+    
+    document.getElementById('wTotalCount').textContent = total;
+    document.getElementById('wPendingCount').textContent = pending;
+    document.getElementById('wPaidCount').textContent = paid;
+    document.getElementById('wTotalPaid').textContent = formatCurrency(totalPaid);
+    
+    if (!wins.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No winners found</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = wins.map(w => {
+      const user = allUsers.find(u => u.id === w.user_id);
+      return `
+        <tr>
+          <td style="font-size:13px;">${user ? user.name : '—'}</td>
+          <td style="font-size:12px;color:var(--text-muted);">${w.draw_id}</td>
+          <td><span style="font-weight:700;">${w.match_type}</span>-Match</td>
+          <td><span style="font-weight:700;color:var(--accent-gold);">${formatCurrency(w.prize_amount)}</span></td>
+          <td>
+            ${w.proof_url ? `<a href="${w.proof_url}" target="_blank" class="btn-outline btn-sm"><i class="fas fa-eye"></i> View</a>` : '<span style="color:var(--text-muted);font-size:12px;">Not uploaded</span>'}
+          </td>
+          <td><span class="badge badge-${w.payment_status}">${w.payment_status}</span></td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              ${w.payment_status === 'pending' && w.proof_url ? `<button class="btn-sm" style="background:rgba(59,130,246,0.15);color:#3b82f6;border:1px solid rgba(59,130,246,0.3);border-radius:6px;cursor:pointer;padding:5px 10px;font-size:12px;" onclick="openWinnerReview('${w.id}')">Review</button>` : ''}
+              ${w.payment_status === 'verified' ? `<button class="btn-success btn-sm" onclick="markAsPaid('${w.id}')">Mark Paid</button>` : ''}
+              ${w.payment_status === 'paid' ? '<span style="color:var(--accent-green);font-size:12px;"><i class="fas fa-check-circle"></i> Complete</span>' : ''}
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function filterWinners(filter, btn) {
+    currentWinnerFilter = filter;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderWinnersAdmin();
+  }
+
+  function openWinnerReview(id) {
+    const winner = allWinners.find(w => w.id === id);
+    const user = allUsers.find(u => u.id === winner?.user_id);
+    if (!winner) return;
+    document.getElementById('reviewWinnerId').value = id;
+    document.getElementById('winnerReviewContent').innerHTML = `
+      <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:16px;margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><div style="font-size:11px;color:var(--text-muted);">WINNER</div><div style="font-weight:600;">${user?.name || '—'}</div></div>
+          <div><div style="font-size:11px;color:var(--text-muted);">PRIZE</div><div style="font-weight:700;color:var(--accent-gold);">${formatCurrency(winner.prize_amount)}</div></div>
+          <div><div style="font-size:11px;color:var(--text-muted);">MATCH TYPE</div><div style="font-weight:600;">${winner.match_type}-Number Match</div></div>
+          <div><div style="font-size:11px;color:var(--text-muted);">DRAW</div><div style="font-size:13px;">${winner.draw_id}</div></div>
+        </div>
+      </div>
+      ${winner.proof_url ? `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Submitted Proof</div>
+          <a href="${winner.proof_url}" target="_blank" class="btn-outline" style="display:inline-flex;">
+            <i class="fas fa-external-link-alt"></i> View Proof Document
+          </a>
+        </div>` : '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> No proof uploaded yet</div>'}
+    `;
+    Modal.open('winnerReviewModal');
+  }
+
+  async function approveWinner() {
+    const id = document.getElementById('reviewWinnerId').value;
+    const notes = document.getElementById('adminNotesInput').value;
+    try {
+      await API.patch('winners', id, {
+        payment_status: 'verified',
+        verified_at: new Date().toISOString(),
+        admin_notes: notes
+      });
+      const idx = allWinners.findIndex(w => w.id === id);
+      if (idx >= 0) { allWinners[idx].payment_status = 'verified'; allWinners[idx].verified_at = new Date().toISOString(); }
+      Modal.close('winnerReviewModal');
+      Notify.success('Winner approved and verified!');
+      renderWinnersAdmin();
+    } catch { Notify.error('Failed'); }
+  }
+
+  async function rejectWinner() {
+    const id = document.getElementById('reviewWinnerId').value;
+    const notes = document.getElementById('adminNotesInput').value;
+    if (!confirm('Reject this winner? They will need to re-upload proof.')) return;
+    try {
+      await API.patch('winners', id, { payment_status: 'rejected', admin_notes: notes || 'Proof rejected by admin' });
+      const idx = allWinners.findIndex(w => w.id === id);
+      if (idx >= 0) allWinners[idx].payment_status = 'rejected';
+      Modal.close('winnerReviewModal');
+      Notify.success('Winner rejected');
+      renderWinnersAdmin();
+    } catch { Notify.error('Failed'); }
+  }
+
+  async function markAsPaid(id) {
+    if (!confirm('Mark this winner as paid?')) return;
+    try {
+      await API.patch('winners', id, { payment_status: 'paid', paid_at: new Date().toISOString() });
+      
+      // Create payment record
+      const winner = allWinners.find(w => w.id === id);
+      if (winner) {
+        await API.post('payments', {
+          id: generateId('pay'),
+          user_id: winner.user_id,
+          winner_id: id,
+          payment_method: 'bank_transfer',
+          amount: winner.prize_amount,
+          currency: 'GBP',
+          status: 'completed',
+          transaction_id: `TXN_${Date.now()}`,
+          processed_at: new Date().toISOString()
+        });
+      }
+      
+      const idx = allWinners.findIndex(w => w.id === id);
+      if (idx >= 0) allWinners[idx].payment_status = 'paid';
+      Notify.success('Winner marked as paid!');
+      renderWinnersAdmin();
+    } catch { Notify.error('Failed'); }
+  }
+
+  // ===== CHARITIES ADMIN =====
+  function renderCharitiesAdmin() {
+    const grid = document.getElementById('adminCharityGrid');
+    if (!allCharities.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);">No charities</div>';
+      return;
+    }
+    grid.innerHTML = allCharities.map(c => `
+      <div class="charity-card">
+        <div class="charity-card-img">
+          <img src="${c.image_url}" alt="${c.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200/6366f1/white?text=${encodeURIComponent(c.name)}'" />
+          ${c.is_featured ? '<div style="position:absolute;top:12px;left:12px;background:var(--accent-gold);color:black;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⭐ Featured</div>' : ''}
+          ${!c.is_active ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;"><span class="badge badge-inactive">Inactive</span></div>' : ''}
+        </div>
+        <div class="charity-card-body">
+          <span class="charity-card-cat">${c.category}</span>
+          <div class="charity-card-name">${c.name}</div>
+          <div class="charity-card-desc">${c.short_description || ''}</div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <button class="btn-outline btn-sm" onclick="openEditCharity('${c.id}')"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn-sm" style="background:rgba(245,158,11,${c.is_featured?'0.3':'0.1'});color:var(--accent-gold);border:1px solid rgba(245,158,11,0.3);border-radius:6px;cursor:pointer;padding:5px 10px;font-size:12px;" onclick="toggleFeatured('${c.id}', ${c.is_featured})">
+              ${c.is_featured ? '★ Featured' : '☆ Feature'}
+            </button>
+            <button class="btn-danger btn-sm" onclick="deleteCharity('${c.id}')"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openEditCharity(id) {
+    const c = allCharities.find(c => c.id === id);
+    if (!c) return;
+    document.getElementById('charityModalTitle').textContent = 'Edit Charity';
+    document.getElementById('editCharityId').value = id;
+    document.getElementById('charityName').value = c.name;
+    document.getElementById('charityCategory').value = c.category;
+    document.getElementById('charityShortDesc').value = c.short_description || '';
+    document.getElementById('charityDesc').value = c.description || '';
+    document.getElementById('charityImageUrl').value = c.image_url || '';
+    document.getElementById('charityWebsite').value = c.website_url || '';
+    document.getElementById('charityCountry').value = c.country || 'UK';
+    document.getElementById('charityFounded').value = c.founded_year || '';
+    document.getElementById('charityFeatured').checked = c.is_featured;
+    document.getElementById('charityActive').checked = c.is_active;
+    Modal.open('addCharityModal');
+  }
+
+  async function saveCharity() {
+    const editId = document.getElementById('editCharityId').value;
+    const data = {
+      name: document.getElementById('charityName').value,
+      category: document.getElementById('charityCategory').value,
+      short_description: document.getElementById('charityShortDesc').value,
+      description: document.getElementById('charityDesc').value,
+      image_url: document.getElementById('charityImageUrl').value,
+      website_url: document.getElementById('charityWebsite').value,
+      country: document.getElementById('charityCountry').value,
+      founded_year: parseInt(document.getElementById('charityFounded').value) || null,
+      is_featured: document.getElementById('charityFeatured').checked,
+      is_active: document.getElementById('charityActive').checked,
+      total_raised: 0, donor_count: 0
+    };
+    
+    if (!data.name) { Notify.error('Charity name is required'); return; }
+    
+    try {
+      if (editId) {
+        await API.patch('charities', editId, data);
+        const idx = allCharities.findIndex(c => c.id === editId);
+        if (idx >= 0) allCharities[idx] = { ...allCharities[idx], ...data };
+        Notify.success('Charity updated!');
+      } else {
+        const newCharity = await API.post('charities', { id: generateId('charity'), ...data });
+        allCharities.push(newCharity);
+        Notify.success('Charity added!');
+      }
+      document.getElementById('editCharityId').value = '';
+      document.getElementById('charityModalTitle').textContent = 'Add New Charity';
+      Modal.close('addCharityModal');
+      renderCharitiesAdmin();
+    } catch { Notify.error('Failed to save charity'); }
+  }
+
+  async function toggleFeatured(id, current) {
+    // Remove featured from others first
+    if (!current) {
+      for (const c of allCharities.filter(c => c.is_featured)) {
+        await API.patch('charities', c.id, { is_featured: false });
+        c.is_featured = false;
+      }
+    }
+    await API.patch('charities', id, { is_featured: !current });
+    const idx = allCharities.findIndex(c => c.id === id);
+    if (idx >= 0) allCharities[idx].is_featured = !current;
+    Notify.success(current ? 'Removed from featured' : 'Set as featured charity');
+    renderCharitiesAdmin();
+  }
+
+  async function deleteCharity(id) {
+    if (!confirm('Delete this charity? Users who selected it will need to choose a new one.')) return;
+    try {
+      await API.delete('charities', id);
+      allCharities = allCharities.filter(c => c.id !== id);
+      Notify.success('Charity deleted');
+      renderCharitiesAdmin();
+    } catch { Notify.error('Failed'); }
+  }
+
+  // ===== PAYMENTS ADMIN =====
+  function renderPaymentsAdmin() {
+    const tbody = document.getElementById('paymentsAdminBody');
+    if (!allPayments.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No payments recorded</td></tr>';
+      return;
+    }
+    tbody.innerHTML = allPayments.map(p => {
+      const user = allUsers.find(u => u.id === p.user_id);
+      return `
+        <tr>
+          <td style="font-size:11px;color:var(--text-muted);">${p.transaction_id || p.id}</td>
+          <td style="font-size:13px;">${user?.name || '—'}</td>
+          <td style="font-weight:700;color:var(--accent-gold);">${formatCurrency(p.amount || 0)}</td>
+          <td style="font-size:12px;">${p.payment_method || 'bank_transfer'}</td>
+          <td><span class="badge badge-${p.status === 'completed' ? 'paid' : p.status}">${p.status}</span></td>
+          <td style="font-size:12px;color:var(--text-muted);">${DateHelper.format(p.processed_at)}</td>
+          <td>
+            ${p.status !== 'completed' ? `<button class="btn-success btn-sm" onclick="completePayment('${p.id}')">Complete</button>` : '<span style="color:var(--accent-green);font-size:12px;">✓ Done</span>'}
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function completePayment(id) {
+    try {
+      await API.patch('payments', id, { status: 'completed', processed_at: new Date().toISOString() });
+      const idx = allPayments.findIndex(p => p.id === id);
+      if (idx >= 0) allPayments[idx].status = 'completed';
+      Notify.success('Payment marked as completed');
+      renderPaymentsAdmin();
+    } catch { Notify.error('Failed'); }
+  }
+
+  // ===== INIT =====
+  initAdmin();
+</script>
+</body>
+</html>

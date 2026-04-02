@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    /* ── PRICING-SPECIFIC STYLES ── */
+    .pricing-hero { padding: 130px 24px 80px; text-align: center; position: relative; }
+    .pricing-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 30%, rgba(99,102,241,0.14), transparent);
+    }
+    .billing-toggle-wrap {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; margin-top: 36px;
+    }
+    .billing-label {
+      font-size: 15px; font-weight: 600; transition: color 0.2s;
+    }
+    .billing-label.active { color: var(--text-primary); }
+    .billing-label.inactive { color: var(--text-secondary); }
+    .toggle-switch { width: 54px; height: 30px; position: relative; display: inline-block; cursor: pointer; }
+    .toggle-switch input { display: none; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: rgba(255,255,255,0.1);
+      border-radius: 30px; transition: 0.3s; border: 1px solid var(--border);
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; width: 22px; height: 22px;
+      left: 4px; top: 3px; background: var(--primary); border-radius: 50%; transition: 0.3s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: rgba(99,102,241,0.15); border-color: var(--primary); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(24px); }
+    .save-badge {
+      background: rgba(16,185,129,0.15); color: var(--accent-green);
+      padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700;
+    }
+    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 860px; margin: 0 auto; }
+    @media (max-width: 640px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .pricing-card {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px; position: relative; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+    .pricing-card.featured {
+      border-color: rgba(99,102,241,0.5);
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05));
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.3), 0 20px 50px rgba(99,102,241,0.1);
+    }
+    .pricing-popular-badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;
+      font-size: 11px; font-weight: 700; padding: 5px 16px; border-radius: 20px;
+      white-space: nowrap; letter-spacing: 0.02em;
+    }
+    .pricing-plan { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px; }
+    .pricing-price { margin-bottom: 4px; }
+    .pricing-amount { font-size: 48px; font-weight: 900; font-family: 'Sora', sans-serif; line-height: 1; }
+    .pricing-period { font-size: 16px; color: var(--text-secondary); margin-left: 4px; }
+    .pricing-save { font-size: 13px; color: var(--accent-green); font-weight: 600; min-height: 20px; margin-bottom: 8px; }
+    .pricing-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6; }
+    .pricing-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .pricing-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text-secondary); }
+    .pricing-feature i { color: var(--accent-green); margin-top: 2px; flex-shrink: 0; width: 14px; }
+    .pricing-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 15px 24px; border-radius: 12px; font-size: 15px;
+      font-weight: 700; cursor: pointer; border: none; text-decoration: none;
+      transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .pricing-btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;
+      box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+    }
+    .pricing-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(99,102,241,0.5); }
+    .pricing-btn-outline {
+      background: transparent; color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+    .pricing-btn-outline:hover { border-color: var(--primary); color: var(--primary-light); }
+    .pricing-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+    
+    /* Stripe badge */
+    .stripe-secure {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 12px; color: var(--text-muted); margin-top: 16px;
+    }
+    .stripe-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px; padding: 4px 10px; font-size: 11px; color: #9ca3af;
+    }
+    
+    /* Alert banners */
+    .pricing-alert {
+      max-width: 860px; margin: 0 auto 24px; padding: 14px 20px;
+      border-radius: 12px; font-size: 14px; display: flex; align-items: center; gap: 12px;
+    }
+    .pricing-alert-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+    .pricing-alert-warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+    .pricing-alert-info { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); color: #a5b4fc; }
+    
+    /* Current plan indicator */
+    .current-plan-tag {
+      position: absolute; top: 12px; right: 14px;
+      background: rgba(16,185,129,0.15); color: var(--accent-green);
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .two-col-explainer { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    @media (max-width: 768px) { .two-col-explainer { grid-template-columns: 1fr; } }
+    .faq-item summary { cursor: pointer; font-weight: 600; font-size: 16px; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    .faq-item summary::marker { display: none; }
+
+    /* Test mode notice */
+    .test-mode-notice {
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #fcd34d;
+      display: flex; align-items: center; gap: 10px; max-width: 860px; margin: 0 auto 20px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#lg)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#lg)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#lg)"/>
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="charities.html" class="nav-link">Charities</a>
+      <a href="pricing.html" class="nav-link active">Pricing</a>
+      <a href="draws.html" class="nav-link">Draws</a>
+    </div>
+    <div class="nav-actions" id="navActions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="nav-mobile-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="pricing-hero">
+  <div style="position:relative;z-index:1;">
+    <div class="section-tag" style="display:inline-block;margin-bottom:16px;" data-animate="fadeInUp">Simple Pricing</div>
+    <h1 class="section-title" data-animate="fadeInUp" data-delay="100">
+      One Plan. All Features.<br /><span class="gradient-text">Real Impact.</span>
+    </h1>
+    <p class="section-subtitle" data-animate="fadeInUp" data-delay="200">
+      No hidden fees. Every plan includes full access to draws, scores, and charity giving.<br />
+      Payments secured by <strong style="color:var(--text-primary);">Stripe</strong>.
+    </p>
+
+    <!-- Billing Toggle -->
+    <div class="billing-toggle-wrap" data-animate="fadeInUp" data-delay="300">
+      <span class="billing-label active" id="toggleMonthlyLabel">Monthly</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="billingToggle" onchange="toggleBilling()" />
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="billing-label inactive" id="toggleYearlyLabel">
+        Yearly
+        <span class="save-badge" style="margin-left:8px;">Save 25%</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- STATUS ALERTS -->
+<div style="padding:0 24px;max-width:908px;margin:0 auto;">
+  <!-- Cancelled notice -->
+  <div id="cancelledAlert" style="display:none;" class="pricing-alert pricing-alert-warning">
+    <i class="fas fa-times-circle"></i>
+    <span>Payment was cancelled. No charge was made. You can try again anytime.</span>
+    <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:inherit;cursor:pointer;margin-left:auto;"><i class="fas fa-times"></i></button>
+  </div>
+  <!-- Upgrade required notice -->
+  <div id="upgradeAlert" style="display:none;" class="pricing-alert pricing-alert-info">
+    <i class="fas fa-lock"></i>
+    <span id="upgradeAlertMsg">An active subscription is required to access that feature.</span>
+    <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:inherit;cursor:pointer;margin-left:auto;"><i class="fas fa-times"></i></button>
+  </div>
+  <!-- Test mode notice -->
+  <div id="testModeNotice" style="display:none;" class="test-mode-notice">
+    <i class="fas fa-flask"></i>
+    <div>
+      <strong>Stripe Test Mode</strong> — Use card <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">4242 4242 4242 4242</code>
+      with any future expiry and any CVC. No real charges will be made.
+    </div>
+  </div>
+  <!-- Current subscription notice -->
+  <div id="currentSubAlert" style="display:none;" class="pricing-alert pricing-alert-success">
+    <i class="fas fa-check-circle"></i>
+    <span id="currentSubMsg"></span>
+    <a href="dashboard.html#subscription" style="color:inherit;font-weight:700;text-decoration:underline;margin-left:8px;">Manage →</a>
+  </div>
+</div>
+
+<!-- PRICING CARDS -->
+<section style="padding:0 24px 80px;">
+  <div class="pricing-grid" id="pricingGrid">
+
+    <!-- Monthly Card -->
+    <div class="pricing-card" id="monthlyCard" data-animate="fadeInUp">
+      <div id="monthlyCurrentTag" style="display:none;" class="current-plan-tag">✓ Current Plan</div>
+      <div class="pricing-plan">Monthly</div>
+      <div class="pricing-price">
+        <span class="pricing-amount" id="monthlyAmount">£9.99</span>
+        <span class="pricing-period" id="monthlyPeriod">/month</span>
+      </div>
+      <div class="pricing-save" id="monthlySave">&nbsp;</div>
+      <div class="pricing-desc">Perfect for casual golfers. No commitment — cancel anytime.</div>
+      <div class="pricing-features">
+        <div class="pricing-feature"><i class="fas fa-check"></i>Monthly prize draw entries</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Log up to 5 Stableford scores</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Choose your charity (10–50%)</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>3-match, 4-match, 5-match prizes</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Real-time prize pool tracking</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Winner verification + payouts</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Cancel anytime</div>
+      </div>
+      <button class="pricing-btn pricing-btn-outline" id="monthlyBtn"
+        onclick="handlePlanClick('monthly', this)">
+        <i class="fas fa-credit-card"></i>
+        <span id="monthlyBtnText">Subscribe Monthly</span>
+      </button>
+      <div class="stripe-secure">
+        <i class="fas fa-shield-alt"></i> Secured by Stripe · Cancel anytime
+      </div>
+    </div>
+
+    <!-- Yearly Card -->
+    <div class="pricing-card featured" id="yearlyCard" data-animate="fadeInUp" data-delay="100">
+      <div class="pricing-popular-badge">Most Popular — Best Value</div>
+      <div id="yearlyCurrentTag" style="display:none;" class="current-plan-tag">✓ Current Plan</div>
+      <div class="pricing-plan">Yearly</div>
+      <div class="pricing-price">
+        <span class="pricing-amount" id="yearlyAmount">£89.99</span>
+        <span class="pricing-period" id="yearlyPeriod">/year</span>
+      </div>
+      <div class="pricing-save" id="yearlySave">Save £29.89 vs monthly · Only £7.50/month</div>
+      <div class="pricing-desc">Best value for committed golfers. Pay once, access all year.</div>
+      <div class="pricing-features">
+        <div class="pricing-feature"><i class="fas fa-check"></i>12 monthly prize draw entries</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Log up to 5 Stableford scores</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Choose your charity (10–50%)</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>3-match, 4-match, 5-match prizes</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Real-time prize pool tracking</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Winner verification + payouts</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i>Priority email support</div>
+        <div class="pricing-feature"><i class="fas fa-check"></i><strong style="color:var(--accent-green);">25% annual saving</strong></div>
+      </div>
+      <button class="pricing-btn pricing-btn-primary" id="yearlyBtn"
+        onclick="handlePlanClick('yearly', this)">
+        <i class="fas fa-crown"></i>
+        <span id="yearlyBtnText">Subscribe Yearly — Best Value</span>
+      </button>
+      <div class="stripe-secure" style="color:rgba(255,255,255,0.4);">
+        <i class="fas fa-shield-alt"></i> Secured by Stripe · Cancel anytime
+      </div>
+    </div>
+  </div>
+
+  <!-- Stripe logos row -->
+  <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-top:32px;flex-wrap:wrap;">
+    <div class="stripe-badge"><i class="fab fa-stripe" style="font-size:16px;"></i> Powered by Stripe</div>
+    <div class="stripe-badge"><i class="fas fa-lock"></i> 256-bit SSL</div>
+    <div class="stripe-badge"><i class="fas fa-credit-card"></i> Visa · Mastercard · Amex</div>
+    <div class="stripe-badge"><i class="fas fa-rotate-left"></i> Cancel anytime</div>
+  </div>
+</section>
+
+<!-- PRIZE POOL EXPLAINER -->
+<section style="padding:80px 24px;background:var(--bg-card2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag section-tag-gold">Prize Pool</div>
+      <h2 class="section-title">How the Prize Pool Works</h2>
+      <p class="section-subtitle">The prize pool grows with every subscriber. Here's exactly where your money goes.</p>
+    </div>
+    <div class="two-col-explainer" style="margin-top:48px;">
+      <div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:20px;">Monthly plan example at 200 members:</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;justify-content:space-between;padding:16px;background:rgba(255,255,255,0.04);border-radius:10px;">
+            <div><div style="font-weight:600;">Subscription Revenue</div><div style="font-size:13px;color:var(--text-muted);">200 × £9.99/month</div></div>
+            <div style="font-size:20px;font-weight:800;color:var(--text-primary);">£1,998</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:16px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:10px;">
+            <div><div style="font-weight:600;">Prize Pool (60%)</div><div style="font-size:13px;color:var(--text-muted);">Goes to monthly winners</div></div>
+            <div style="font-size:20px;font-weight:800;color:var(--primary-light);">£1,199</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:16px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;">
+            <div><div style="font-weight:600;">Charity Contributions (avg 15%)</div><div style="font-size:13px;color:var(--text-muted);">Your chosen charity</div></div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent-green);">£300</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:16px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;">
+            <div><div style="font-weight:600;">Platform Operations (25%)</div><div style="font-size:13px;color:var(--text-muted);">Keeps GolfGive running</div></div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent-gold);">£499</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:20px;">Prize distribution (from pool):</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;justify-content:space-between;padding:20px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;">
+            <div><div style="font-weight:700;font-size:16px;">5-Number Match (Jackpot)</div><div style="font-size:13px;color:var(--text-muted);">Rolls over if no winner</div></div>
+            <div style="text-align:right;"><div style="font-size:28px;font-weight:900;color:var(--accent-gold);">40%</div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:20px;background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.2);border-radius:12px;">
+            <div><div style="font-weight:700;font-size:16px;">4-Number Match</div><div style="font-size:13px;color:var(--text-muted);">Split among winners</div></div>
+            <div style="text-align:right;"><div style="font-size:28px;font-weight:900;color:#94a3b8;">35%</div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:20px;background:rgba(180,120,60,0.08);border:1px solid rgba(180,120,60,0.2);border-radius:12px;">
+            <div><div style="font-weight:700;font-size:16px;">3-Number Match</div><div style="font-size:13px;color:var(--text-muted);">Split among winners</div></div>
+            <div style="text-align:right;"><div style="font-size:28px;font-weight:900;color:#cd7f32;">25%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQs -->
+<section style="padding:80px 24px;">
+  <div style="max-width:800px;margin:0 auto;">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Common Questions</h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;" data-animate="fadeInUp">
+      <details class="faq-item" style="background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:20px;">
+        <summary>Can I cancel my subscription anytime? <i class="fas fa-chevron-down" style="color:var(--text-muted);font-size:14px;transition:transform 0.2s;"></i></summary>
+        <p style="margin-top:12px;color:var(--text-secondary);line-height:1.7;">Yes! Cancel from your Dashboard → Subscription tab at any time. Access continues until the end of the current billing period. No penalties or hidden fees.</p>
+      </details>
+      <details class="faq-item" style="background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:20px;">
+        <summary>How do Stripe payments work? <i class="fas fa-chevron-down" style="color:var(--text-muted);font-size:14px;transition:transform 0.2s;"></i></summary>
+        <p style="margin-top:12px;color:var(--text-secondary);line-height:1.7;">We use Stripe — the world's leading payments platform — to handle all transactions. Your card details are never stored on our servers. Stripe uses bank-level 256-bit encryption. You can pay with Visa, Mastercard, Amex, and more.</p>
+      </details>
+      <details class="faq-item" style="background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:20px;">
+        <summary>How do I enter the monthly draw? <i class="fas fa-chevron-down" style="color:var(--text-muted);font-size:14px;transition:transform 0.2s;"></i></summary>
+        <p style="margin-top:12px;color:var(--text-secondary);line-height:1.7;">Log your Stableford scores (1–45) in your dashboard. Your 5 most recent scores become your draw numbers automatically. Active subscribers are entered into every monthly draw.</p>
+      </details>
+      <details class="faq-item" style="background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:20px;">
+        <summary>What happens if my payment fails? <i class="fas fa-chevron-down" style="color:var(--text-muted);font-size:14px;transition:transform 0.2s;"></i></summary>
+        <p style="margin-top:12px;color:var(--text-secondary);line-height:1.7;">Stripe will automatically retry failed payments. If all retries fail, your subscription will be paused and we'll email you. You can update your payment method from the billing portal anytime to restore access immediately.</p>
+      </details>
+      <details class="faq-item" style="background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:20px;">
+        <summary>Can I switch between monthly and yearly? <i class="fas fa-chevron-down" style="color:var(--text-muted);font-size:14px;transition:transform 0.2s;"></i></summary>
+        <p style="margin-top:12px;color:var(--text-secondary);line-height:1.7;">Yes! From your Dashboard → Subscription tab, click "Manage Subscription" to access the Stripe portal where you can switch plans, update payment methods, or download invoices.</p>
+      </details>
+      <details class="faq-item" style="background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:20px;">
+        <summary>What percentage goes to charity? <i class="fas fa-chevron-down" style="color:var(--text-muted);font-size:14px;transition:transform 0.2s;"></i></summary>
+        <p style="margin-top:12px;color:var(--text-secondary);line-height:1.7;">You choose between 10% and 50% of your subscription. Set this during signup and adjust anytime from your dashboard.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-bg"><div class="cta-orb cta-orb-1"></div><div class="cta-orb cta-orb-2"></div></div>
+  <div style="max-width:700px;margin:0 auto;text-align:center;position:relative;z-index:1;" data-animate="fadeInUp">
+    <h2 class="cta-title">Start Your First Month Today</h2>
+    <p class="cta-subtitle" style="color:rgba(255,255,255,0.7);">Join 2,400+ members already winning prizes and funding charities.</p>
+    <div class="cta-actions" style="justify-content:center;gap:16px;flex-wrap:wrap;">
+      <button onclick="handlePlanClick('monthly')" class="btn-cta-primary" id="ctaMonthlyBtn">
+        <i class="fas fa-credit-card"></i> Start Monthly — £9.99/month
+      </button>
+      <button onclick="handlePlanClick('yearly')" class="btn-cta-secondary" id="ctaYearlyBtn" style="border:2px solid rgba(255,255,255,0.2);">
+        <i class="fas fa-crown"></i> Start Yearly — £89.99/year
+      </button>
+    </div>
+    <div class="cta-guarantee"><i class="fas fa-shield-alt"></i><span>Secured by Stripe · No hidden fees · Cancel anytime</span></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-bottom" style="border:none;padding:0;">
+      <p>© 2026 GolfGive Ltd. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="index.html">Home</a>
+        <a href="charities.html">Charities</a>
+        <a href="draws.html">Draws</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/stripe-config.js"></script>
+<script src="js/stripe-checkout.js"></script>
+<script>
+  let isYearly = false;
+  let currentUserSub = null;
+
+  // Init page
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Check for URL params
+    const params = new URLSearchParams(window.location.search);
+    
+    if (params.get('cancelled') === 'true') {
+      document.getElementById('cancelledAlert').style.display = 'flex';
+    }
+    if (params.get('upgrade') === 'required') {
+      document.getElementById('upgradeAlert').style.display = 'flex';
+      const reason = params.get('reason');
+      if (reason) {
+        const msgs = {
+          past_due: 'Your payment failed. Please subscribe to restore access.',
+          expired: 'Your subscription expired. Please renew to continue.',
+          cancelled: 'Your subscription is cancelled. Subscribe again to access all features.',
+          none: 'A subscription is required to access that feature.'
+        };
+        document.getElementById('upgradeAlertMsg').textContent = msgs[reason] || msgs.none;
+      }
+    }
+    
+    // Show test mode notice if Stripe not configured
+    if (!StripeConfig.isConfigured() || StripeConfig.isTestMode()) {
+      document.getElementById('testModeNotice').style.display = 'flex';
+    }
+
+    // Check if user has a plan already
+    const user = Auth.getUser();
+    if (user) {
+      await checkUserSubscription(user);
+      
+      // Update nav
+      const navActions = document.getElementById('navActions');
+      if (navActions) {
+        navActions.innerHTML = `
+          <a href="dashboard.html" class="btn-ghost">Dashboard</a>
+          <a href="#" onclick="Auth.logout()" class="btn-outline">Sign Out</a>
+        `;
+      }
+    }
+
+    // Handle billing toggle from URL
+    if (params.get('plan') === 'yearly') {
+      document.getElementById('billingToggle').checked = true;
+      isYearly = true;
+      updateToggleUI();
+    }
+  });
+
+  async function checkUserSubscription(user) {
+    try {
+      const res = await API.get('subscriptions', { limit: 100 });
+      const subs = res.data || [];
+      currentUserSub = subs.find(s => s.user_id === user.id && s.status === 'active');
+      
+      if (currentUserSub) {
+        const planType = currentUserSub.plan_type || currentUserSub.plan;
+        const renewalDate = DateHelper.format(currentUserSub.current_period_end);
+        
+        document.getElementById('currentSubAlert').style.display = 'flex';
+        document.getElementById('currentSubMsg').textContent = 
+          `You're on the ${planType === 'yearly' ? 'Yearly' : 'Monthly'} plan. Renews ${renewalDate}.`;
+
+        // Mark current plan
+        if (planType === 'monthly') {
+          document.getElementById('monthlyCurrentTag').style.display = 'flex';
+          document.getElementById('monthlyBtnText').textContent = 'Current Plan';
+          document.getElementById('monthlyBtn').disabled = true;
+        } else if (planType === 'yearly') {
+          document.getElementById('yearlyCurrentTag').style.display = 'flex';
+          document.getElementById('yearlyBtnText').textContent = 'Current Plan';
+          document.getElementById('yearlyBtn').disabled = true;
+        }
+      }
+    } catch (e) {
+      console.error('checkUserSubscription error:', e);
+    }
+  }
+
+  function toggleBilling() {
+    isYearly = document.getElementById('billingToggle').checked;
+    updateToggleUI();
+  }
+
+  function updateToggleUI() {
+    document.getElementById('toggleMonthlyLabel').className = 
+      `billing-label ${isYearly ? 'inactive' : 'active'}`;
+    document.getElementById('toggleYearlyLabel').className = 
+      `billing-label ${isYearly ? 'active' : 'inactive'}`;
+  }
+
+  async function handlePlanClick(planType, btn) {
+    const user = Auth.getUser();
+    
+    // Not logged in → go to signup
+    if (!user) {
+      sessionStorage.setItem('pending_plan', planType);
+      window.location.href = 'signup.html?plan=' + planType;
+      return;
+    }
+
+    // Already active on this plan
+    if (currentUserSub && (currentUserSub.plan_type === planType || currentUserSub.plan === planType)) {
+      window.location.href = 'dashboard.html#subscription';
+      return;
+    }
+
+    // Start Stripe checkout
+    const targetBtn = btn || document.getElementById(planType + 'Btn');
+    if (targetBtn) {
+      targetBtn.disabled = true;
+      targetBtn.innerHTML = `<div class="spinner spinner-sm" style="border-color:rgba(255,255,255,0.3);border-top-color:white;width:16px;height:16px;border-width:2px;"></div><span>Loading Stripe...</span>`;
+    }
+
+    try {
+      const result = await StripeCheckout.startCheckout(planType, user.email, user.id);
+      
+      // Demo mode - payment completed in modal
+      if (result && result.success) {
+        Notify.success('Subscription activated! Redirecting to dashboard...');
+        setTimeout(() => window.location.href = 'dashboard.html#subscription', 1500);
+      } else if (result && result.cancelled) {
+        Notify.info('Payment cancelled. You can try again anytime.');
+      }
+    } catch (err) {
+      Notify.error('Checkout failed: ' + err.message);
+    } finally {
+      if (targetBtn) {
+        targetBtn.disabled = false;
+        const labels = {
+          monthly: 'Subscribe Monthly',
+          yearly: 'Subscribe Yearly — Best Value'
+        };
+        const icons = { monthly: 'fa-credit-card', yearly: 'fa-crown' };
+        targetBtn.innerHTML = `<i class="fas ${icons[planType]}"></i><span>${labels[planType]}</span>`;
+      }
+    }
+  }
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('toggle', function() {
+      const icon = this.querySelector('summary i');
+      if (icon) icon.style.transform = this.open ? 'rotate(180deg)' : 'rotate(0)';
+    });
+  });
+</script>
+</body>
+</html>

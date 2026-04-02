@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Draws & Results — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#lg)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#lg)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#lg)"/>
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="charities.html" class="nav-link">Charities</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="draws.html" class="nav-link active">Draws</a>
+    </div>
+    <div class="nav-actions" id="navActions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="nav-mobile-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section style="padding:130px 24px 80px;position:relative;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 30%, rgba(99,102,241,0.12), transparent);pointer-events:none;"></div>
+  <div style="max-width:1280px;margin:0 auto;position:relative;z-index:1;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;" class="draws-hero-grid">
+      <div>
+        <div class="section-tag section-tag-gold" style="display:inline-block;margin-bottom:16px;" data-animate="fadeInUp">Monthly Draws</div>
+        <h1 style="font-size:clamp(40px,4.5vw,64px);font-weight:900;line-height:1.1;margin-bottom:20px;letter-spacing:-2px;" data-animate="fadeInUp" data-delay="100">
+          Win Real Prizes.<br /><span class="gradient-text-gold">Every Month.</span>
+        </h1>
+        <p style="font-size:18px;color:var(--text-secondary);line-height:1.7;margin-bottom:32px;" data-animate="fadeInUp" data-delay="200">
+          Your Stableford scores become lottery numbers. Match 3, 4 or all 5 numbers to win cash prizes. The jackpot rolls over until someone wins big.
+        </p>
+        <a href="signup.html" class="btn-hero-primary" data-animate="fadeInUp" data-delay="300">Enter Next Draw</a>
+      </div>
+      <div data-animate="fadeInRight">
+        <!-- Live Prize Pool Card -->
+        <div class="card" style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(217,119,6,0.08));border-color:rgba(245,158,11,0.25);padding:32px;">
+          <div style="font-size:13px;color:var(--accent-gold);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">April 2026 Prize Pool</div>
+          <div style="font-size:72px;font-weight:900;font-family:'Sora',sans-serif;color:var(--accent-gold);line-height:1;" id="heroPoolAmount">£1,440</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px;">incl. £480 jackpot rollover from March</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;padding:12px 16px;background:rgba(245,158,11,0.1);border-radius:8px;">
+              <span style="font-weight:600;">5-Match Jackpot (40%)</span>
+              <span style="font-weight:700;color:var(--accent-gold);" id="prize5m">£576</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:12px 16px;background:rgba(148,163,184,0.08);border-radius:8px;">
+              <span style="font-weight:600;">4-Match Prize (35%)</span>
+              <span style="font-weight:700;color:#94a3b8;" id="prize4m">£504</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:12px 16px;background:rgba(180,120,60,0.08);border-radius:8px;">
+              <span style="font-weight:600;">3-Match Prize (25%)</span>
+              <span style="font-weight:700;color:#cd7f32;" id="prize3m">£360</span>
+            </div>
+          </div>
+          <div class="draw-countdown" style="margin-top:20px;">
+            <div class="countdown-label">Next Draw In</div>
+            <div class="countdown-timer">
+              <div class="countdown-unit"><span id="cdDays">--</span><small>Days</small></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span id="cdHours">--</span><small>Hrs</small></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span id="cdMins">--</span><small>Min</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How Draws Work -->
+<section style="padding:80px 24px;background:var(--bg-card2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag">Draw Mechanics</div>
+      <h2 class="section-title">How the Draw Works</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card" data-animate="fadeInUp">
+        <div class="step-number">01</div>
+        <div class="step-icon step-icon-blue"><i class="fas fa-golf-ball"></i></div>
+        <h3 class="step-title">Log Your Scores</h3>
+        <p class="step-desc">Enter your last 5 Stableford scores (1–45). These become your draw numbers. Adding a new score replaces the oldest one automatically.</p>
+      </div>
+      <div class="step-card" data-animate="fadeInUp" data-delay="100">
+        <div class="step-number">02</div>
+        <div class="step-icon step-icon-gold"><i class="fas fa-drum"></i></div>
+        <h3 class="step-title">Monthly Draw</h3>
+        <p class="step-desc">At the end of each month, 5 numbers between 1-45 are drawn. We use either random lottery mode or algorithmic mode weighted by score popularity.</p>
+      </div>
+      <div class="step-card" data-animate="fadeInUp" data-delay="200">
+        <div class="step-number">03</div>
+        <div class="step-icon step-icon-green"><i class="fas fa-trophy"></i></div>
+        <h3 class="step-title">Win Prizes</h3>
+        <p class="step-desc">Match 3 numbers = 25% share. Match 4 numbers = 35% share. Match all 5 = 40% jackpot. Prizes split among winners. Jackpot rolls over if no 5-match winner.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Draw History -->
+<section style="padding:80px 24px;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag">Results</div>
+      <h2 class="section-title">Draw History</h2>
+    </div>
+    
+    <div id="drawHistoryContainer">
+      <div style="text-align:center;padding:60px;"><div class="spinner" style="margin:0 auto;"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Winners Showcase -->
+<section style="padding:80px 24px;background:var(--bg-card2);border-top:1px solid var(--border);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag section-tag-gold">Hall of Fame</div>
+      <h2 class="section-title">Recent Winners</h2>
+    </div>
+    <div id="winnersShowcase">
+      <div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-bg"><div class="cta-orb cta-orb-1"></div><div class="cta-orb cta-orb-2"></div></div>
+  <div style="max-width:700px;margin:0 auto;text-align:center;position:relative;z-index:1;" data-animate="fadeInUp">
+    <h2 class="cta-title">Your Lucky Round Could Be Next</h2>
+    <p class="cta-subtitle" style="color:rgba(255,255,255,0.7);">Subscribe today and enter the monthly draw. Every score logged is a chance to win.</p>
+    <div class="cta-actions">
+      <a href="signup.html" class="btn-cta-primary">Join Now — £9.99/month <i class="fas fa-arrow-right"></i></a>
+      <a href="pricing.html" class="btn-cta-secondary">View Plans</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-bottom" style="border:none;padding:0;">
+      <p>© 2026 GolfGive Ltd. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="index.html">Home</a>
+        <a href="charities.html">Charities</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  @media (max-width: 768px) {
+    .draws-hero-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+
+<script src="js/main.js"></script>
+<script>
+  const user = Auth.getUser();
+  if (user) {
+    document.getElementById('navActions').innerHTML = `
+      <a href="dashboard.html" class="btn-ghost">Dashboard</a>
+      <a href="#" onclick="Auth.logout()" class="btn-outline">Sign Out</a>
+    `;
+  }
+
+  // Countdown
+  function updateCountdown() {
+    const now = new Date();
+    const nextDraw = new Date(now.getFullYear(), now.getMonth() + 1, 0, 20, 0, 0);
+    const diff = nextDraw - now;
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      document.getElementById('cdDays').textContent = String(days).padStart(2, '0');
+      document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('cdMins').textContent = String(mins).padStart(2, '0');
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+
+  async function loadDraws() {
+    try {
+      const res = await API.get('draws', { limit: 20 });
+      const draws = (res.data || []).sort((a, b) => b.draw_month.localeCompare(a.draw_month));
+      
+      // Update prize pool display
+      const currentDraw = draws.find(d => d.status === 'draft') || draws[0];
+      if (currentDraw) {
+        const total = (currentDraw.total_prize_pool || 1440) + (currentDraw.jackpot_rollover || 0);
+        document.getElementById('heroPoolAmount').textContent = '£' + total.toLocaleString();
+        document.getElementById('prize5m').textContent = '£' + Math.floor(total * 0.4).toLocaleString();
+        document.getElementById('prize4m').textContent = '£' + Math.floor(total * 0.35).toLocaleString();
+        document.getElementById('prize3m').textContent = '£' + Math.floor(total * 0.25).toLocaleString();
+      }
+      
+      const container = document.getElementById('drawHistoryContainer');
+      const published = draws.filter(d => d.status === 'published');
+      const pending = draws.filter(d => d.status === 'draft');
+      
+      let html = '';
+      
+      // Upcoming draws
+      if (pending.length) {
+        html += `<div style="margin-bottom:32px;"><h3 style="font-size:20px;font-weight:700;margin-bottom:16px;">Upcoming</h3>`;
+        html += pending.map(d => `
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+              <div>
+                <div style="font-size:20px;font-weight:800;">${d.draw_month}</div>
+                <div style="font-size:13px;color:var(--text-muted);">Draw not yet run</div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <div style="text-align:center;padding:10px 20px;background:rgba(245,158,11,0.08);border-radius:8px;">
+                  <div style="font-weight:700;color:var(--accent-gold);">£${((d.total_prize_pool || 0) + (d.jackpot_rollover || 0)).toLocaleString()}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">Prize Pool</div>
+                </div>
+                ${d.jackpot_rollover > 0 ? `<span style="background:rgba(239,68,68,0.1);color:#f87171;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;"><i class="fas fa-fire"></i> +£${d.jackpot_rollover} Rollover</span>` : ''}
+                <span class="badge badge-pending">Upcoming</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        html += '</div>';
+      }
+      
+      // Past draws
+      if (published.length) {
+        html += `<h3 style="font-size:20px;font-weight:700;margin-bottom:16px;">Past Results</h3>`;
+        html += published.map(d => {
+          const prizes = DrawEngine.calculatePrizes(d.total_prize_pool || 0, d.jackpot_rollover || 0);
+          return `
+            <div class="card" style="margin-bottom:16px;">
+              <div class="card-head">
+                <div>
+                  <h3>${d.draw_month}</h3>
+                  <div style="font-size:12px;color:var(--text-muted);">Published ${DateHelper.format(d.drawn_at)} · ${d.mode === 'random' ? '🎲 Random' : '🧮 Algorithmic'}</div>
+                </div>
+                <span class="badge badge-published">Published</span>
+              </div>
+              <div class="card-body">
+                <div style="margin-bottom:20px;">
+                  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Drawn Numbers</div>
+                  <div class="draw-balls">
+                    ${d.drawn_numbers.map((n, i) => `<div class="draw-ball" style="animation-delay:${i*0.1}s;">${n}</div>`).join('')}
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                  <div style="padding:14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;text-align:center;">
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">5-MATCH JACKPOT</div>
+                    <div style="font-size:20px;font-weight:800;color:var(--accent-gold);">£${prizes.fiveMatch.toLocaleString()}</div>
+                  </div>
+                  <div style="padding:14px;background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.15);border-radius:10px;text-align:center;">
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">4-MATCH PRIZE</div>
+                    <div style="font-size:20px;font-weight:800;color:#94a3b8;">£${prizes.fourMatch.toLocaleString()}</div>
+                  </div>
+                  <div style="padding:14px;background:rgba(180,120,60,0.08);border:1px solid rgba(180,120,60,0.15);border-radius:10px;text-align:center;">
+                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">3-MATCH PRIZE</div>
+                    <div style="font-size:20px;font-weight:800;color:#cd7f32;">£${prizes.threeMatch.toLocaleString()}</div>
+                  </div>
+                </div>
+                ${d.jackpot_rollover > 0 ? `<div style="margin-top:12px;padding:10px 14px;background:rgba(239,68,68,0.08);border-radius:8px;font-size:13px;color:#f87171;"><i class="fas fa-arrow-up"></i> £${d.jackpot_rollover} jackpot rolled over from previous draw</div>` : ''}
+              </div>
+            </div>`;
+        }).join('');
+      }
+      
+      if (!draws.length) {
+        html = '<div class="empty-state"><div class="empty-icon">🎲</div><div class="empty-title">No draws yet</div><div class="empty-desc">Check back soon for the first monthly draw.</div></div>';
+      }
+      
+      container.innerHTML = html;
+    } catch (e) {
+      document.getElementById('drawHistoryContainer').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Failed to load</div></div>';
+    }
+  }
+
+  async function loadWinnersShowcase() {
+    try {
+      const [winnersRes, usersRes] = await Promise.all([
+        API.get('winners', { limit: 20 }),
+        API.get('users', { limit: 100 })
+      ]);
+      const winners = (winnersRes.data || []).filter(w => w.payment_status === 'paid' || w.payment_status === 'verified');
+      const users = usersRes.data || [];
+      
+      const container = document.getElementById('winnersShowcase');
+      
+      if (!winners.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">🏆</div><div class="empty-title">First draw coming soon!</div><div class="empty-desc">Be one of the first winners on GolfGive.</div></div>';
+        return;
+      }
+      
+      container.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+          ${winners.map(w => {
+            const user = users.find(u => u.id === w.user_id);
+            return `
+              <div class="card" style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.05));border-color:rgba(245,158,11,0.2);">
+                <div class="card-body" style="text-align:center;">
+                  <img src="${user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=winner'}" style="width:56px;height:56px;border-radius:50%;margin:0 auto 12px;" />
+                  <div style="font-weight:700;margin-bottom:4px;">${user ? user.name.split(' ')[0] + ' ' + (user.name.split(' ')[1]?.[0] || '') + '.' : 'Anonymous'}</div>
+                  <div class="badge badge-${w.match_type === 5 ? 'paid' : 'verified'}" style="margin-bottom:10px;">${w.match_type}-Number Match</div>
+                  <div style="font-size:32px;font-weight:900;color:var(--accent-gold);font-family:'Sora',sans-serif;">${formatCurrency(w.prize_amount)}</div>
+                  <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Draw ${w.draw_id}</div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>`;
+    } catch (e) {
+      document.getElementById('winnersShowcase').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Failed to load</div></div>';
+    }
+  }
+
+  loadDraws();
+  loadWinnersShowcase();
+</script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    .signup-container { max-width: 680px; }
+    .step-indicator {
+      display: flex; align-items: center; gap: 0;
+      margin-bottom: 36px; justify-content: center;
+    }
+    .step-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      background: rgba(255,255,255,0.06);
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      transition: all 0.3s;
+      position: relative; z-index: 1;
+    }
+    .step-dot.active { background: var(--gradient-primary); border-color: transparent; color: white; }
+    .step-dot.done { background: var(--accent-green); border-color: transparent; color: white; }
+    .step-line { flex: 1; height: 2px; background: var(--border); max-width: 80px; }
+    .step-line.done { background: var(--accent-green); }
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+    .plan-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .plan-card {
+      border: 2px solid var(--border); border-radius: 12px; padding: 20px;
+      cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .plan-card:hover { border-color: var(--primary); }
+    .plan-card.selected { border-color: var(--primary); background: rgba(99,102,241,0.08); }
+    .plan-card-badge {
+      position: absolute; top: -10px; right: 14px;
+      background: var(--gradient-primary); color: white;
+      font-size: 10px; font-weight: 700; padding: 2px 10px;
+      border-radius: 20px; text-transform: uppercase;
+    }
+    .plan-name { font-weight: 700; margin-bottom: 4px; }
+    .plan-price { font-size: 28px; font-weight: 900; color: var(--primary-light); }
+    .plan-period { font-size: 13px; color: var(--text-muted); }
+    .plan-check {
+      position: absolute; bottom: 12px; right: 12px;
+      width: 22px; height: 22px; background: var(--primary);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 11px; opacity: 0; transition: opacity 0.2s;
+    }
+    .plan-card.selected .plan-check { opacity: 1; }
+    .charity-step-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 4px; }
+    .charity-step-card {
+      border: 2px solid var(--border); border-radius: 10px; padding: 14px;
+      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px;
+    }
+    .charity-step-card:hover { border-color: var(--primary); }
+    .charity-step-card.selected { border-color: var(--primary); background: rgba(99,102,241,0.08); }
+    .charity-step-img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
+    .charity-step-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .charity-step-cat { font-size: 11px; color: var(--text-muted); }
+    .contribution-slider { width: 100%; appearance: none; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.1); outline: none; }
+    .contribution-slider::-webkit-slider-thumb {
+      appearance: none; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--primary); cursor: pointer;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.5);
+    }
+    .contribution-display {
+      text-align: center; font-size: 48px; font-weight: 900;
+      font-family: 'Sora', sans-serif; color: var(--primary-light); margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#lg)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#lg)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#lg)"/>
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+    <div class="nav-actions">
+      <span style="color:var(--text-secondary);font-size:14px;">Already have an account?</span>
+      <a href="login.html" class="btn-outline">Sign In</a>
+    </div>
+  </div>
+</nav>
+
+<div class="auth-page" style="align-items:flex-start;padding-top:90px;">
+  <div class="auth-bg">
+    <div class="auth-orb-1"></div>
+    <div class="auth-orb-2"></div>
+  </div>
+  <div class="auth-card signup-container" data-animate="fadeInUp">
+    <div class="auth-header">
+      <h1 class="auth-title">Create Your Account</h1>
+      <p class="auth-subtitle">Join thousands of golfers making a difference</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="stepDot1">1</div>
+      <div class="step-line" id="stepLine1"></div>
+      <div class="step-dot" id="stepDot2">2</div>
+      <div class="step-line" id="stepLine2"></div>
+      <div class="step-dot" id="stepDot3">3</div>
+      <div class="step-line" id="stepLine3"></div>
+      <div class="step-dot" id="stepDot4">4</div>
+    </div>
+
+    <div id="signupAlert" class="alert alert-error" style="display:none;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="signupAlertMsg">Something went wrong</span>
+    </div>
+
+    <!-- Step 1: Account Details -->
+    <div class="step-panel active" id="step1">
+      <h3 style="margin-bottom:20px;font-size:18px;">Account Details</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="firstName">First Name</label>
+          <input type="text" id="firstName" class="form-control" placeholder="James" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="lastName">Last Name</label>
+          <input type="text" id="lastName" class="form-control" placeholder="Mitchell" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="signupEmail">Email Address</label>
+        <div class="form-control-icon">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" id="signupEmail" class="form-control" placeholder="you@example.com" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="signupPhone">Phone (optional)</label>
+        <div class="form-control-icon">
+          <i class="fas fa-phone input-icon"></i>
+          <input type="tel" id="signupPhone" class="form-control" placeholder="+44 7700 900000" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="signupPassword">Password</label>
+        <div class="form-control-icon">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="signupPassword" class="form-control" placeholder="At least 8 characters" required />
+        </div>
+        <div class="form-hint">Must be at least 8 characters</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="confirmPassword">Confirm Password</label>
+        <div class="form-control-icon">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="confirmPassword" class="form-control" placeholder="Repeat password" required />
+        </div>
+      </div>
+      <button type="button" class="btn-primary btn-full btn-lg" onclick="goToStep(2)">
+        Continue <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Step 2: Choose Plan -->
+    <div class="step-panel" id="step2">
+      <h3 style="margin-bottom:20px;font-size:18px;">Choose Your Plan</h3>
+      <div class="plan-cards">
+        <div class="plan-card" id="planMonthly" onclick="selectPlan('monthly')">
+          <div class="plan-name">Monthly</div>
+          <div class="plan-price">£9.99</div>
+          <div class="plan-period">per month</div>
+          <div class="plan-check"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="plan-card" id="planYearly" onclick="selectPlan('yearly')">
+          <div class="plan-card-badge">Save 25%</div>
+          <div class="plan-name">Yearly</div>
+          <div class="plan-price">£89.99</div>
+          <div class="plan-period">per year (£7.50/mo)</div>
+          <div class="plan-check"><i class="fas fa-check"></i></div>
+        </div>
+      </div>
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:13px;color:var(--text-secondary);display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;"><i class="fas fa-check" style="color:var(--accent-green);"></i> Entry to monthly prize draws</div>
+          <div style="display:flex;align-items:center;gap:8px;"><i class="fas fa-check" style="color:var(--accent-green);"></i> Unlimited score logging</div>
+          <div style="display:flex;align-items:center;gap:8px;"><i class="fas fa-check" style="color:var(--accent-green);"></i> Charity contribution</div>
+          <div style="display:flex;align-items:center;gap:8px;"><i class="fas fa-check" style="color:var(--accent-green);"></i> Cancel anytime</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button type="button" class="btn-outline" onclick="goToStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn-primary" style="flex:1;" onclick="goToStep(3)">Continue to Charity <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 3: Choose Charity -->
+    <div class="step-panel" id="step3">
+      <h3 style="margin-bottom:6px;font-size:18px;">Choose Your Charity</h3>
+      <p style="color:var(--text-secondary);font-size:14px;margin-bottom:20px;">A portion of your subscription goes to your chosen charity</p>
+      <div class="charity-step-grid" id="charityGrid">
+        <div style="padding:20px;text-align:center;grid-column:1/-1;">
+          <div class="spinner" style="margin:0 auto;"></div>
+          <div style="margin-top:10px;color:var(--text-muted);font-size:14px;">Loading charities...</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:16px;">
+        <button type="button" class="btn-outline" onclick="goToStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn-primary" style="flex:1;" id="continueToContrib" onclick="goToStep(4)">Set Contribution % <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 4: Contribution % -->
+    <div class="step-panel" id="step4">
+      <h3 style="margin-bottom:6px;font-size:18px;">Charity Contribution</h3>
+      <p style="color:var(--text-secondary);font-size:14px;margin-bottom:24px;">How much of your subscription should go to your chosen charity?</p>
+      
+      <div style="text-align:center;margin-bottom:24px;">
+        <div class="contribution-display" id="contribDisplay">10%</div>
+        <div style="font-size:13px;color:var(--text-secondary);" id="contribAmount">£1.00 per month</div>
+      </div>
+      
+      <input type="range" class="contribution-slider" id="contribSlider" min="10" max="50" value="10" step="5" />
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px;">
+        <span>10% min</span>
+        <span>50% max</span>
+      </div>
+      
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:14px;margin:20px 0;">
+        <div style="font-size:13px;color:var(--accent-green);font-weight:600;margin-bottom:4px;">💚 Your Impact</div>
+        <div style="font-size:13px;color:var(--text-secondary);" id="impactText">With 10% contribution, you'd donate £1.00/month = £12.00/year</div>
+      </div>
+      
+      <div style="margin-bottom:20px;">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;">
+          <input type="checkbox" id="termsCheck" style="width:16px;height:16px;accent-color:var(--primary);" />
+          <span style="color:var(--text-secondary);">I agree to the <a href="#" style="color:var(--primary-light);">Terms & Conditions</a> and <a href="#" style="color:var(--primary-light);">Privacy Policy</a></span>
+        </label>
+      </div>
+
+      <div style="display:flex;gap:12px;">
+        <button type="button" class="btn-outline" onclick="goToStep(3)"><i class="fas fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn-primary" style="flex:1;" id="createAccountBtn" onclick="createAccount()">
+          <i class="fas fa-credit-card"></i>
+          <span>Create Account & Pay</span>
+        </button>
+      </div>
+      <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px;">
+        <i class="fas fa-shield-alt"></i> Secured by <strong style="color:var(--text-secondary);">Stripe</strong> · Cancel anytime
+      </div>
+    </div>
+
+    <div class="auth-footer" style="margin-top:20px;">
+      Already have an account? <a href="login.html">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/stripe-config.js"></script>
+<script src="js/stripe-checkout.js"></script>
+<script>
+  if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
+  
+  // Pre-select plan from URL or pending session
+  const _urlParams = new URLSearchParams(window.location.search);
+  const _pendingPlan = sessionStorage.getItem('pending_plan') || _urlParams.get('plan');
+  if (_pendingPlan === 'yearly') {
+    // Will be applied after DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      selectPlan('yearly');
+      sessionStorage.removeItem('pending_plan');
+    });
+  }
+  
+  let currentStep = 1;
+  let selectedPlan = 'monthly';
+  let selectedCharityId = null;
+  let charities = [];
+
+  function goToStep(step) {
+    // Validate current step
+    if (step > currentStep) {
+      if (currentStep === 1 && !validateStep1()) return;
+      if (currentStep === 3 && !selectedCharityId) {
+        Notify.error('Please select a charity to support');
+        return;
+      }
+    }
+    
+    // Update UI
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    
+    // Mark previous steps as done
+    for (let i = 1; i < step; i++) {
+      document.getElementById(`stepDot${i}`).className = 'step-dot done';
+      document.getElementById(`stepDot${i}`).innerHTML = '<i class="fas fa-check" style="font-size:11px;"></i>';
+      if (i < 4) document.getElementById(`stepLine${i}`).className = 'step-line done';
+    }
+    
+    document.getElementById(`stepDot${step}`).className = 'step-dot active';
+    document.getElementById(`step${step}`).classList.add('active');
+    currentStep = step;
+    
+    if (step === 3) loadCharities();
+  }
+
+  function validateStep1() {
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+
+    if (!firstName || !lastName) { Notify.error('Please enter your full name'); return false; }
+    if (!Validate.email(email)) { Notify.error('Please enter a valid email address'); return false; }
+    if (!Validate.password(password)) { Notify.error('Password must be at least 8 characters'); return false; }
+    if (password !== confirm) { Notify.error('Passwords do not match'); return false; }
+    return true;
+  }
+
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    document.getElementById('planMonthly').classList.toggle('selected', plan === 'monthly');
+    document.getElementById('planYearly').classList.toggle('selected', plan === 'yearly');
+    const sl = document.getElementById('contribSlider');
+    if (sl) updateContribDisplay();
+  }
+  selectPlan('monthly');
+
+  async function loadCharities() {
+    const grid = document.getElementById('charityGrid');
+    try {
+      const res = await API.get('charities', { limit: 20 });
+      charities = (res.data || []).filter(c => c.is_active);
+      
+      grid.innerHTML = charities.map(c => `
+        <div class="charity-step-card" id="charity-${c.id}" onclick="selectCharity('${c.id}')">
+          <img src="${c.image_url}" alt="${c.name}" class="charity-step-img" onerror="this.src='https://via.placeholder.com/44x44/6366f1/white?text=C'" />
+          <div style="flex:1;min-width:0;">
+            <div class="charity-step-name">${c.name}</div>
+            <div class="charity-step-cat">${c.category}</div>
+          </div>
+          <div style="width:20px;height:20px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;opacity:0;transition:opacity 0.2s;" class="select-check">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      grid.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">Failed to load charities</div>';
+    }
+  }
+
+  function selectCharity(id) {
+    selectedCharityId = id;
+    document.querySelectorAll('.charity-step-card').forEach(el => {
+      el.classList.remove('selected');
+      el.querySelector('.select-check').style.opacity = '0';
+    });
+    const card = document.getElementById(`charity-${id}`);
+    if (card) {
+      card.classList.add('selected');
+      card.querySelector('.select-check').style.opacity = '1';
+    }
+  }
+
+  // Contribution slider
+  const slider = document.getElementById('contribSlider');
+  if (slider) slider.addEventListener('input', updateContribDisplay);
+
+  function updateContribDisplay() {
+    const sl = document.getElementById('contribSlider');
+    const pct = sl ? parseInt(sl.value) : 10;
+    const monthlyAmount = selectedPlan === 'monthly' ? 9.99 : 89.99 / 12;
+    const contrib = (monthlyAmount * pct / 100).toFixed(2);
+    const yearly = (contrib * 12).toFixed(2);
+    document.getElementById('contribDisplay').textContent = pct + '%';
+    document.getElementById('contribAmount').textContent = `£${contrib} per month`;
+    document.getElementById('impactText').textContent = 
+      `With ${pct}% contribution, you'd donate £${contrib}/month = £${yearly}/year`;
+  }
+
+  async function createAccount() {
+    if (!document.getElementById('termsCheck').checked) {
+      Notify.error('Please accept the Terms & Conditions');
+      return;
+    }
+
+    const btn = document.getElementById('createAccountBtn');
+    btn.innerHTML = '<div class="spinner spinner-sm"></div><span>Creating...</span>';
+    btn.disabled = true;
+
+    try {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const phone = document.getElementById('signupPhone').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      // Check if email exists
+      const existingRes = await API.get('users', { limit: 100 });
+      const existing = (existingRes.data || []).find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (existing) {
+        Notify.error('An account with this email already exists');
+        return;
+      }
+
+      const userId = generateId('user');
+      const user = await API.post('users', {
+        id: userId,
+        name: `${firstName} ${lastName}`,
+        email,
+        phone,
+        password_hash: password, // In production: bcrypt hash
+        role: 'user',
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${firstName}`,
+        country: 'GB',
+        is_email_verified: false,
+        is_active: true,
+        subscription_status: 'none',
+        plan_type: '',
+        joined_at: new Date().toISOString(),
+        total_winnings: 0,
+        total_donated: 0
+      });
+
+      // Create charity selection first
+      if (selectedCharityId) {
+        try {
+          await API.post('user_charity_selections', {
+            id: generateId('ucs'),
+            user_id: userId,
+            charity_id: selectedCharityId,
+            contribution_percentage: parseInt(document.getElementById('contribSlider')?.value || 10),
+            donation_type: 'subscription',
+            total_donated: 0,
+            is_active: true
+          });
+        } catch (e) { console.error('Charity selection error:', e); }
+      }
+
+      // Login user first
+      Auth.login(user);
+      
+      Notify.success('Account created! Redirecting to payment...');
+      
+      // Update button state
+      btn.innerHTML = '<div class="spinner spinner-sm"></div><span>Loading payment...</span>';
+      
+      await new Promise(r => setTimeout(r, 800));
+
+      // Start Stripe Checkout for subscription payment
+      try {
+        const checkoutResult = await StripeCheckout.startCheckout(selectedPlan, email, userId);
+        
+        // Demo mode - checkout completed in modal
+        if (checkoutResult && checkoutResult.success) {
+          Notify.success('Subscription activated! Welcome to GolfGive! 🎉');
+          setTimeout(() => window.location.href = 'subscription-success.html?plan=' + selectedPlan, 1000);
+          return;
+        } else if (checkoutResult && checkoutResult.cancelled) {
+          // User cancelled — still log them in but without subscription
+          Notify.info('Payment cancelled. You can subscribe anytime from your dashboard.');
+          setTimeout(() => window.location.href = 'dashboard.html', 1200);
+          return;
+        }
+        // If real Stripe redirect, the page will redirect automatically
+        return;
+      } catch (stripeErr) {
+        // Stripe failed — still log in, they can subscribe later
+        console.error('Stripe checkout error:', stripeErr);
+        Notify.info('Account created! You can subscribe from your dashboard.');
+        setTimeout(() => window.location.href = 'dashboard.html', 1200);
+        return;
+      }
+
+    } catch (err) {
+      Notify.error('Failed to create account. Please try again.');
+      console.error(err);
+    } finally {
+      btn.innerHTML = '<span>Create My Account</span><i class="fas fa-check"></i>';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charities — GolfGive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    .charities-hero {
+      padding: 130px 24px 80px; text-align: center; position: relative;
+    }
+    .charities-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 30%, rgba(99,102,241,0.15), transparent);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#lg)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#lg)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#lg)"/>
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="charities.html" class="nav-link active">Charities</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="draws.html" class="nav-link">Draws</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="nav-mobile-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="nav-mobile-menu" id="mobileMenu">
+    <a href="index.html" class="nav-mobile-link">Home</a>
+    <a href="charities.html" class="nav-mobile-link">Charities</a>
+    <a href="pricing.html" class="nav-mobile-link">Pricing</a>
+    <a href="draws.html" class="nav-mobile-link">Draws</a>
+    <a href="login.html" class="nav-mobile-link">Sign In</a>
+    <a href="signup.html" class="btn-primary" style="margin:12px 16px;">Get Started</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="charities-hero">
+  <div style="position:relative;z-index:1;">
+    <div class="section-tag section-tag-green" data-animate="fadeInUp" style="display:inline-block;margin-bottom:16px;">Our Charity Partners</div>
+    <h1 class="section-title" data-animate="fadeInUp" data-delay="100" style="margin-bottom:16px;">Making Golf Count<br /><span class="gradient-text">for Good</span></h1>
+    <p class="section-subtitle" data-animate="fadeInUp" data-delay="200">Every GolfGive subscription contributes to life-changing charities. Browse our partners and choose which cause your subscription supports.</p>
+    <div data-animate="fadeInUp" data-delay="300" style="display:flex;justify-content:center;gap:32px;margin-top:40px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-size:32px;font-weight:900;color:var(--accent-green);">£427K+</div>
+        <div style="font-size:13px;color:var(--text-muted);">Total Raised</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:32px;font-weight:900;color:var(--primary-light);">6</div>
+        <div style="font-size:13px;color:var(--text-muted);">Partner Charities</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:32px;font-weight:900;color:var(--accent-gold);">2,400+</div>
+        <div style="font-size:13px;color:var(--text-muted);">Generous Donors</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filters -->
+<section style="padding:0 24px 60px;">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;align-items:center;">
+      <div class="search-bar" style="flex:1;min-width:260px;">
+        <i class="fas fa-search"></i>
+        <input type="text" id="charitySearch" placeholder="Search charities..." oninput="filterCharities()" />
+      </div>
+      <div class="filter-tabs" id="categoryTabs">
+        <button class="filter-tab active" onclick="setCat('all', this)">All Causes</button>
+        <button class="filter-tab" onclick="setCat('health', this)">Health</button>
+        <button class="filter-tab" onclick="setCat('children', this)">Children</button>
+        <button class="filter-tab" onclick="setCat('environment', this)">Environment</button>
+        <button class="filter-tab" onclick="setCat('sports', this)">Sports</button>
+        <button class="filter-tab" onclick="setCat('elderly', this)">Elderly</button>
+        <button class="filter-tab" onclick="setCat('animals', this)">Animals</button>
+      </div>
+    </div>
+
+    <div id="charityGrid" class="charity-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px;">
+        <div class="spinner" style="margin:0 auto 16px;"></div>
+        <div style="color:var(--text-muted);">Loading charities...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Impact Section -->
+<section style="padding:80px 24px;background:var(--bg-card2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag section-tag-green">How It Works</div>
+      <h2 class="section-title">Where Your Money Goes</h2>
+      <p class="section-subtitle">Every subscription is split between prize pools and charity. You decide the percentage.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;" class="steps-grid">
+      <div class="step-card" data-animate="fadeInUp">
+        <div class="step-icon step-icon-purple"><i class="fas fa-pound-sign"></i></div>
+        <h3 class="step-title">You Subscribe</h3>
+        <p class="step-desc">Pay £9.99/month or £89.99/year. Your payment is split between the prize pool and your chosen charity based on your selected percentage (min 10%).</p>
+      </div>
+      <div class="step-card" data-animate="fadeInUp" data-delay="100">
+        <div class="step-icon step-icon-blue"><i class="fas fa-hand-holding-heart"></i></div>
+        <h3 class="step-title">Charity Receives Automatically</h3>
+        <p class="step-desc">Your charity contribution is processed automatically with every payment. No extra steps — you choose it once and it happens every cycle.</p>
+      </div>
+      <div class="step-card" data-animate="fadeInUp" data-delay="200">
+        <div class="step-icon step-icon-green"><i class="fas fa-chart-line"></i></div>
+        <h3 class="step-title">Track Your Impact</h3>
+        <p class="step-desc">Your dashboard shows exactly how much you've donated in total. See your real impact grow month over month.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" style="padding:80px 24px;">
+  <div class="cta-bg"><div class="cta-orb cta-orb-1"></div><div class="cta-orb cta-orb-2"></div></div>
+  <div style="max-width:700px;margin:0 auto;text-align:center;position:relative;z-index:1;">
+    <h2 class="cta-title">Ready to Support a Cause?</h2>
+    <p class="cta-subtitle" style="color:rgba(255,255,255,0.7);">Subscribe to GolfGive and choose your charity today. From just £9.99/month.</p>
+    <div class="cta-actions">
+      <a href="signup.html" class="btn-cta-primary">Start Supporting Now <i class="fas fa-arrow-right"></i></a>
+      <a href="pricing.html" class="btn-cta-secondary">View Plans</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-bottom" style="border:none;padding:0;">
+      <p>© 2026 GolfGive Ltd. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="index.html">Home</a>
+        <a href="charities.html">Charities</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="login.html">Sign In</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+  let charities = [];
+  let currentCat = 'all';
+
+  async function loadCharities() {
+    try {
+      const res = await API.get('charities', { limit: 50 });
+      charities = (res.data || []).filter(c => c.is_active);
+      filterCharities();
+    } catch {
+      document.getElementById('charityGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);">Failed to load charities</div>';
+    }
+  }
+
+  function setCat(cat, btn) {
+    currentCat = cat;
+    document.querySelectorAll('#categoryTabs .filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    filterCharities();
+  }
+
+  function filterCharities() {
+    const query = (document.getElementById('charitySearch')?.value || '').toLowerCase();
+    const filtered = charities.filter(c => {
+      const matchSearch = !query || c.name.toLowerCase().includes(query) || (c.short_description || '').toLowerCase().includes(query);
+      const matchCat = currentCat === 'all' || c.category === currentCat;
+      return matchSearch && matchCat;
+    });
+    renderGrid(filtered);
+  }
+
+  function renderGrid(list) {
+    const grid = document.getElementById('charityGrid');
+    if (!list.length) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;" class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">No charities found</div>
+          <div class="empty-desc">Try adjusting your search or category filter</div>
+        </div>`;
+      return;
+    }
+    grid.innerHTML = list.map(c => `
+      <div class="charity-card" onclick="window.location.href='charity.html?id=${c.id}'">
+        <div class="charity-card-img">
+          <img src="${c.image_url}" alt="${c.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200/6366f1/white?text=${encodeURIComponent(c.name)}'" />
+          ${c.is_featured ? '<div style="position:absolute;top:12px;left:12px;background:var(--accent-gold);color:#000;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⭐ Featured</div>' : ''}
+        </div>
+        <div class="charity-card-body">
+          <span class="charity-card-cat">${c.category}</span>
+          <div class="charity-card-name">${c.name}</div>
+          <div class="charity-card-desc">${c.short_description || ''}</div>
+          <div class="charity-card-stats">
+            <div class="charity-mini-stat">
+              <div class="charity-mini-stat-val">${formatCurrency(c.total_raised || 0)}</div>
+              <div class="charity-mini-stat-lbl">Raised</div>
+            </div>
+            <div class="charity-mini-stat">
+              <div class="charity-mini-stat-val">${(c.donor_count || 0).toLocaleString()}</div>
+              <div class="charity-mini-stat-lbl">Donors</div>
+            </div>
+            <div class="charity-mini-stat">
+              <div class="charity-mini-stat-val">${c.founded_year || '—'}</div>
+              <div class="charity-mini-stat-lbl">Founded</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Update nav if logged in
+  const user = Auth.getUser();
+  if (user) {
+    document.querySelector('.nav-actions').innerHTML = `
+      <a href="dashboard.html" class="btn-ghost">Dashboard</a>
+      <a href="#" onclick="Auth.logout()" class="btn-outline">Sign Out</a>
+    `;
+  }
+
+  loadCharities();
+</script>
+</body>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GolfGive — Play Golf. Win Prizes. Change Lives.</title>
+  <meta name="description" content="GolfGive combines golf scoring, exciting prize draws, and meaningful charity contributions. Subscribe monthly or yearly and make every round count." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="url(#logoGrad)" opacity="0.2"/>
+          <circle cx="14" cy="14" r="8" fill="url(#logoGrad)" opacity="0.4"/>
+          <circle cx="14" cy="14" r="4" fill="url(#logoGrad)"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="logo-text">GolfGive</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how-it-works" class="nav-link">How It Works</a>
+      <a href="charities.html" class="nav-link">Charities</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="draws.html" class="nav-link">Draws</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="nav-mobile-btn" id="mobileMenuBtn">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+  <div class="nav-mobile-menu" id="mobileMenu">
+    <a href="#how-it-works" class="nav-mobile-link">How It Works</a>
+    <a href="charities.html" class="nav-mobile-link">Charities</a>
+    <a href="pricing.html" class="nav-mobile-link">Pricing</a>
+    <a href="draws.html" class="nav-mobile-link">Draws</a>
+    <a href="login.html" class="nav-mobile-link">Sign In</a>
+    <a href="signup.html" class="btn-primary" style="margin: 12px 16px;">Get Started</a>
+  </div>
+</nav>
+
+<!-- ===== HERO SECTION ===== -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-container">
+    <div class="hero-badge" data-animate="fadeInUp">
+      <div class="badge-dot"></div>
+      <span>Over £427,000 raised for charity</span>
+    </div>
+    <h1 class="hero-title" data-animate="fadeInUp" data-delay="100">
+      Play Golf.<br />
+      <span class="gradient-text">Win Big.</span><br />
+      Change Lives.
+    </h1>
+    <p class="hero-subtitle" data-animate="fadeInUp" data-delay="200">
+      GolfGive is the first platform that turns your golf scores into prize draw entries — while automatically contributing to the charities that matter most to you. Every round counts.
+    </p>
+    <div class="hero-cta" data-animate="fadeInUp" data-delay="300">
+      <a href="signup.html" class="btn-hero-primary">
+        <span>Start Your Journey</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#how-it-works" class="btn-hero-secondary">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M8 7l5 3-5 3V7z" fill="currentColor"/></svg>
+        <span>See How It Works</span>
+      </a>
+    </div>
+    <div class="hero-trust" data-animate="fadeInUp" data-delay="400">
+      <div class="trust-avatars">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=alice&backgroundColor=b6e3f4" alt="Member" class="trust-avatar" />
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=bob&backgroundColor=ffdfbf" alt="Member" class="trust-avatar" />
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=carol&backgroundColor=d1f4cc" alt="Member" class="trust-avatar" />
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=david&backgroundColor=ffd5dc" alt="Member" class="trust-avatar" />
+      </div>
+      <span class="trust-text">Join <strong>2,400+</strong> golfers already making a difference</span>
+    </div>
+  </div>
+  <div class="hero-visual" data-animate="fadeInRight" data-delay="200">
+    <div class="hero-card hero-card-main">
+      <div class="card-header">
+        <div class="card-avatar">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=james&backgroundColor=b6e3f4" alt="James" />
+        </div>
+        <div>
+          <div class="card-name">James Mitchell</div>
+          <div class="card-sub">Active Member · Monthly Plan</div>
+        </div>
+        <div class="card-badge-green">Active</div>
+      </div>
+      <div class="card-scores">
+        <div class="score-label">Latest Scores (Stableford)</div>
+        <div class="score-bars">
+          <div class="score-bar-item">
+            <span class="score-date">Mar 28</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:75%"></div></div>
+            <span class="score-val">34</span>
+          </div>
+          <div class="score-bar-item">
+            <span class="score-date">Mar 21</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:62%"></div></div>
+            <span class="score-val">28</span>
+          </div>
+          <div class="score-bar-item">
+            <span class="score-date">Mar 14</span>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:69%"></div></div>
+            <span class="score-val">31</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-charity">
+          <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=40&h=40&fit=crop" alt="Charity" class="charity-mini-img" />
+          <span>Supporting Cancer Research UK · 15%</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-card hero-card-prize">
+      <div class="prize-icon">🏆</div>
+      <div class="prize-label">March Draw Winner!</div>
+      <div class="prize-amount">£420</div>
+      <div class="prize-match">4 Number Match</div>
+    </div>
+    <div class="hero-card hero-card-charity">
+      <div class="charity-icon">💚</div>
+      <div class="charity-raised">£127,500</div>
+      <div class="charity-label">Raised This Year</div>
+      <div class="charity-donors">by 2,400+ members</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS SECTION ===== -->
+<section class="stats-section">
+  <div class="stats-container">
+    <div class="stat-card" data-animate="fadeInUp">
+      <div class="stat-icon stat-icon-purple">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-value" data-count="2847">0</div>
+      <div class="stat-label">Active Members</div>
+      <div class="stat-change">+12% this month</div>
+    </div>
+    <div class="stat-card" data-animate="fadeInUp" data-delay="100">
+      <div class="stat-icon stat-icon-green">
+        <i class="fas fa-heart"></i>
+      </div>
+      <div class="stat-value" data-count="427000" data-prefix="£">£0</div>
+      <div class="stat-label">Donated to Charity</div>
+      <div class="stat-change">across 6 charities</div>
+    </div>
+    <div class="stat-card" data-animate="fadeInUp" data-delay="200">
+      <div class="stat-icon stat-icon-gold">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <div class="stat-value" data-count="89">0</div>
+      <div class="stat-label">Prize Winners</div>
+      <div class="stat-change">£284K total paid out</div>
+    </div>
+    <div class="stat-card" data-animate="fadeInUp" data-delay="300">
+      <div class="stat-icon stat-icon-blue">
+        <i class="fas fa-flag"></i>
+      </div>
+      <div class="stat-value" data-count="14230">0</div>
+      <div class="stat-label">Scores Logged</div>
+      <div class="stat-change">+340 this week</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="how-section" id="how-it-works">
+  <div class="section-container">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag">Simple Process</div>
+      <h2 class="section-title">How GolfGive Works</h2>
+      <p class="section-subtitle">Three simple steps between you and your next win — while making a real difference in the world.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card" data-animate="fadeInUp">
+        <div class="step-number">01</div>
+        <div class="step-icon-wrap">
+          <div class="step-icon step-icon-purple">
+            <i class="fas fa-id-card"></i>
+          </div>
+        </div>
+        <h3 class="step-title">Subscribe & Choose Your Charity</h3>
+        <p class="step-desc">Sign up for a monthly or yearly plan. Choose which charity your contribution supports. You choose the percentage — minimum 10%.</p>
+        <div class="step-highlights">
+          <span class="highlight-tag">Monthly from £9.99</span>
+          <span class="highlight-tag">Yearly saves 25%</span>
+        </div>
+      </div>
+      <div class="step-card" data-animate="fadeInUp" data-delay="100">
+        <div class="step-number">02</div>
+        <div class="step-icon-wrap">
+          <div class="step-icon step-icon-blue">
+            <i class="fas fa-golf-ball"></i>
+          </div>
+        </div>
+        <h3 class="step-title">Log Your Golf Scores</h3>
+        <p class="step-desc">Enter your last 5 Stableford scores (1–45). Your numbers become your draw entries. The more you play, the stronger your entries.</p>
+        <div class="step-highlights">
+          <span class="highlight-tag">Stableford format</span>
+          <span class="highlight-tag">Auto-updates</span>
+        </div>
+      </div>
+      <div class="step-card" data-animate="fadeInUp" data-delay="200">
+        <div class="step-number">03</div>
+        <div class="step-icon-wrap">
+          <div class="step-icon step-icon-gold">
+            <i class="fas fa-drum"></i>
+          </div>
+        </div>
+        <h3 class="step-title">Win Prizes Every Month</h3>
+        <p class="step-desc">Monthly draws with 3-match, 4-match and 5-match prizes. Jackpot rolls over until someone wins. Real cash prizes paid directly to winners.</p>
+        <div class="step-highlights">
+          <span class="highlight-tag">3 prize tiers</span>
+          <span class="highlight-tag">Jackpot rollover</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Draw Explainer -->
+    <div class="draw-explainer" data-animate="fadeInUp">
+      <div class="draw-explainer-header">
+        <h3>Prize Pool Distribution</h3>
+        <p>Prize pool grows with every subscriber. Here's how it's split each month:</p>
+      </div>
+      <div class="prize-tiers">
+        <div class="prize-tier prize-tier-gold">
+          <div class="tier-badge">5-Match</div>
+          <div class="tier-pct">40%</div>
+          <div class="tier-label">Jackpot</div>
+          <div class="tier-note">Rolls over if no winner</div>
+        </div>
+        <div class="prize-tier prize-tier-silver">
+          <div class="tier-badge">4-Match</div>
+          <div class="tier-pct">35%</div>
+          <div class="tier-label">Main Prize</div>
+          <div class="tier-note">Split among winners</div>
+        </div>
+        <div class="prize-tier prize-tier-bronze">
+          <div class="tier-badge">3-Match</div>
+          <div class="tier-pct">25%</div>
+          <div class="tier-label">Entry Prize</div>
+          <div class="tier-note">Split among winners</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED CHARITY ===== -->
+<section class="featured-charity-section">
+  <div class="section-container">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag section-tag-green">Featured Charity</div>
+      <h2 class="section-title">Making a Real Impact</h2>
+    </div>
+    <div class="featured-charity-card" data-animate="fadeInUp">
+      <div class="featured-charity-image">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&q=80" alt="Cancer Research UK" loading="lazy" />
+        <div class="featured-charity-overlay">
+          <div class="featured-tag">⭐ Featured This Month</div>
+        </div>
+      </div>
+      <div class="featured-charity-content">
+        <div class="charity-logo-area">
+          <div class="charity-category-badge">Health</div>
+        </div>
+        <h3 class="featured-charity-name">Cancer Research UK</h3>
+        <p class="featured-charity-desc">We are the world's largest independent cancer research organisation. Together with our partners, we fund and run research to help beat cancer and save lives. Every subscription contributes directly to life-saving research.</p>
+        <div class="charity-impact-stats">
+          <div class="impact-stat">
+            <div class="impact-val">£125,000</div>
+            <div class="impact-lbl">Raised via GolfGive</div>
+          </div>
+          <div class="impact-stat">
+            <div class="impact-val">2,340</div>
+            <div class="impact-lbl">GolfGive Donors</div>
+          </div>
+          <div class="impact-stat">
+            <div class="impact-val">Since 2002</div>
+            <div class="impact-lbl">Founded</div>
+          </div>
+        </div>
+        <div class="featured-charity-actions">
+          <a href="charities.html" class="btn-primary">Support This Charity</a>
+          <a href="charities.html" class="btn-outline">See All Charities <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRIZE POOL LIVE ===== -->
+<section class="prize-pool-section">
+  <div class="section-container">
+    <div class="prize-pool-inner" data-animate="fadeInUp">
+      <div class="prize-pool-left">
+        <div class="section-tag section-tag-gold">Live Prize Pool</div>
+        <h2 class="prize-pool-title">April 2026 Draw</h2>
+        <p class="prize-pool-sub">2,847 active subscribers × £9.99/month</p>
+        <div class="prize-pool-total">
+          <span class="pool-currency">£</span>
+          <span class="pool-amount" id="prizePoolAmount">1,440</span>
+        </div>
+        <div class="jackpot-alert">
+          <div class="jackpot-icon">🎯</div>
+          <div>
+            <div class="jackpot-title">Jackpot Rollover Active!</div>
+            <div class="jackpot-sub">+£480 carried over from March</div>
+          </div>
+        </div>
+        <a href="draws.html" class="btn-primary">View Draw Details</a>
+      </div>
+      <div class="prize-pool-right">
+        <div class="pool-breakdown">
+          <div class="pool-item pool-item-gold">
+            <div class="pool-item-left">
+              <div class="pool-item-dot"></div>
+              <div>
+                <div class="pool-item-label">5-Number Match</div>
+                <div class="pool-item-sub">Jackpot Prize</div>
+              </div>
+            </div>
+            <div class="pool-item-right">
+              <div class="pool-item-val">£1,056</div>
+              <div class="pool-item-pct">40% + rollover</div>
+            </div>
+          </div>
+          <div class="pool-item pool-item-silver">
+            <div class="pool-item-left">
+              <div class="pool-item-dot"></div>
+              <div>
+                <div class="pool-item-label">4-Number Match</div>
+                <div class="pool-item-sub">Main Prize</div>
+              </div>
+            </div>
+            <div class="pool-item-right">
+              <div class="pool-item-val">£504</div>
+              <div class="pool-item-pct">35%</div>
+            </div>
+          </div>
+          <div class="pool-item pool-item-bronze">
+            <div class="pool-item-left">
+              <div class="pool-item-dot"></div>
+              <div>
+                <div class="pool-item-label">3-Number Match</div>
+                <div class="pool-item-sub">Entry Prize</div>
+              </div>
+            </div>
+            <div class="pool-item-right">
+              <div class="pool-item-val">£360</div>
+              <div class="pool-item-pct">25%</div>
+            </div>
+          </div>
+        </div>
+        <div class="draw-countdown" id="drawCountdown">
+          <div class="countdown-label">Next Draw In</div>
+          <div class="countdown-timer">
+            <div class="countdown-unit"><span id="cdDays">--</span><small>Days</small></div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit"><span id="cdHours">--</span><small>Hrs</small></div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit"><span id="cdMins">--</span><small>Min</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="testimonials-section">
+  <div class="section-container">
+    <div class="section-header" data-animate="fadeInUp">
+      <div class="section-tag">Real Stories</div>
+      <h2 class="section-title">What Our Members Say</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card" data-animate="fadeInUp">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"I never thought my Saturday rounds could help fund cancer research. The fact that I'm competing for real prizes while helping charity is incredible. Won £280 last October!"</p>
+        <div class="testimonial-author">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=testimonial1&backgroundColor=b6e3f4" alt="Michael" class="testimonial-avatar" />
+          <div>
+            <div class="testimonial-name">Michael O'Brien</div>
+            <div class="testimonial-role">Member since 2024 · 4 wins</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card testimonial-card-featured" data-animate="fadeInUp" data-delay="100">
+        <div class="testimonial-quote-icon">"</div>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"GolfGive changed how I think about my game. Every score I enter goes toward supporting Children in Need. And the monthly draws keep things exciting. Best £9.99 I spend each month."</p>
+        <div class="testimonial-author">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=testimonial2&backgroundColor=ffd5dc" alt="Sarah" class="testimonial-avatar" />
+          <div>
+            <div class="testimonial-name">Sarah Thompson</div>
+            <div class="testimonial-role">Member since 2023 · 7 wins</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-animate="fadeInUp" data-delay="200">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"I was sceptical at first, but the transparency of the prize pool and charity contributions won me over. The admin dashboard shows exactly where every penny goes."</p>
+        <div class="testimonial-author">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=testimonial3&backgroundColor=d1f4cc" alt="Robert" class="testimonial-avatar" />
+          <div>
+            <div class="testimonial-name">Robert Davies</div>
+            <div class="testimonial-role">Member since 2024 · 2 wins</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA SECTION ===== -->
+<section class="cta-section">
+  <div class="cta-bg">
+    <div class="cta-orb cta-orb-1"></div>
+    <div class="cta-orb cta-orb-2"></div>
+  </div>
+  <div class="section-container">
+    <div class="cta-content" data-animate="fadeInUp">
+      <h2 class="cta-title">Ready to Make Every Round Count?</h2>
+      <p class="cta-subtitle">Join thousands of golfers who are winning prizes and funding charities at the same time. Start your subscription today.</p>
+      <div class="cta-actions">
+        <a href="signup.html" class="btn-cta-primary">
+          Start for £9.99/month
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="pricing.html" class="btn-cta-secondary">View All Plans</a>
+      </div>
+      <div class="cta-guarantee">
+        <i class="fas fa-shield-alt"></i>
+        <span>No hidden fees · Cancel anytime · Instant access</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom: 16px; display: inline-flex;">
+          <div class="logo-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="14" r="12" fill="url(#logoGrad2)" opacity="0.2"/>
+              <circle cx="14" cy="14" r="8" fill="url(#logoGrad2)" opacity="0.4"/>
+              <circle cx="14" cy="14" r="4" fill="url(#logoGrad2)"/>
+              <defs><linearGradient id="logoGrad2" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+            </svg>
+          </div>
+          <span class="logo-text">GolfGive</span>
+        </a>
+        <p class="footer-desc">Combining golf scoring, exciting prize draws, and meaningful charity contributions. Every round counts.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <h4>Platform</h4>
+        <a href="pricing.html">Pricing</a>
+        <a href="draws.html">Draws</a>
+        <a href="charities.html">Charities</a>
+        <a href="signup.html">Get Started</a>
+      </div>
+      <div class="footer-links-group">
+        <h4>Account</h4>
+        <a href="login.html">Sign In</a>
+        <a href="signup.html">Sign Up</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="dashboard.html#scores">My Scores</a>
+      </div>
+      <div class="footer-links-group">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Terms & Conditions</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 GolfGive Ltd. All rights reserved. Registered in England & Wales.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+  // Countdown timer
+  function updateCountdown() {
+    const now = new Date();
+    const nextDraw = new Date(now.getFullYear(), now.getMonth() + 1, 0, 20, 0, 0);
+    const diff = nextDraw - now;
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      document.getElementById('cdDays').textContent = String(days).padStart(2, '0');
+      document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('cdMins').textContent = String(mins).padStart(2, '0');
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "code_sandbox_light_b354cc31_1775112389",
+  "version": "1.0.0",
+  "description": "> Play Golf. Win Prizes. Change Lives.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
