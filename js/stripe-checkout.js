@@ -80,25 +80,16 @@ const StripeCheckout = {
     try {
       // Build checkout session parameters
       const sessionParams = {
-        lineItems: [{
-          price: planConfig.id,
-          quantity: 1
-        }],
-        mode: 'subscription',
-        successUrl: StripeConfig.successUrl + '?session_id={CHECKOUT_SESSION_ID}&plan=' + planType,
-        cancelUrl: StripeConfig.cancelUrl,
-        customerEmail: userEmail || undefined,
-        clientReferenceId: userId || undefined,
-        allowPromotionCodes: StripeConfig.allowPromoCode,
-        billingAddressCollection: StripeConfig.collectBillingAddress ? 'required' : 'auto',
-        subscriptionData: {
-          metadata: {
-            golfgive_user_id: userId,
-            plan_type: planType,
-            source: 'golfgive_web'
-          }
-        }
-      };
+  lineItems: [{
+    price: planConfig.id,
+    quantity: 1
+  }],
+  mode: 'subscription',
+  successUrl: StripeConfig.successUrl + '?session_id={CHECKOUT_SESSION_ID}&plan=' + planType,
+  cancelUrl: StripeConfig.cancelUrl,
+  customerEmail: userEmail || undefined,
+  clientReferenceId: userId || undefined
+};
 
       // Add trial if configured
       if (StripeConfig.trialDays > 0) {
