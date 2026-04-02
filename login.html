@@ -142,37 +142,25 @@
     btn.disabled = true;
 
     try {
-      const res = await API.get('users', { limit: 100 });
-      const users = res.data || [];
-      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-      
-      if (!user) {
-        alertMsg.textContent = 'No account found with that email address.';
-        alertEl.style.display = 'flex';
-        return;
-      }
+      const users = [
+  { id: "1", email: "james@example.com", password: "password123", role: "user" },
+  { id: "2", email: "admin@golfcharity.com", password: "admin123", role: "admin" }
+];
 
-      // In production this would be bcrypt comparison
-      // For demo, we check the stored password_hash directly
-      if (user.password_hash !== password) {
-        alertMsg.textContent = 'Incorrect password. Please try again.';
-        alertEl.style.display = 'flex';
-        return;
-      }
+const user = users.find(u => u.email === email && u.password === password);
 
-      if (!user.is_active) {
-        alertMsg.textContent = 'Your account has been deactivated. Please contact support.';
-        alertEl.style.display = 'flex';
-        return;
-      }
+if (!user) {
+  alertMsg.textContent = 'Invalid email or password';
+  alertEl.style.display = 'flex';
+  return;
+}
 
-      // Store user session
-      Auth.login(user);
-      Notify.success(`Welcome back, ${user.name}!`);
-      
-      setTimeout(() => {
-        window.location.href = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
-      }, 800);
+Auth.login(user);
+Notify.success(`Welcome back!`);
+
+setTimeout(() => {
+  window.location.href = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+}, 800);
 
     } catch (err) {
       alertMsg.textContent = 'Connection error. Please try again.';

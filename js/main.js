@@ -2,7 +2,7 @@
 
 // ===== API HELPERS =====
 const API = {
-  base: 'tables',
+  base: ' ',
   async get(table, params = {}) {
     const qs = new URLSearchParams(params).toString();
     const res = await fetch(`${this.base}/${table}${qs ? '?' + qs : ''}`);
