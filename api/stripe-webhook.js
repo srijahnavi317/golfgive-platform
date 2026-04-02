@@ -11,8 +11,9 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  const sig = req.headers["stripe-signature"];
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      console.log("Secret key exists:", !!process.env.STRIPE_SECRET_KEY); 
+     const sig = req.headers["stripe-signature"];
+     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   let event;
 
