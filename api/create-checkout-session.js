@@ -12,8 +12,8 @@ export default async function handler(req, res) {
 
     // 👇 Replace with YOUR real price IDs
     const prices = {
-      monthly: "prod_UFxCJ9BZNqwK7a",
-      yearly: "prod_UFxDvUut81ijK8"
+      monthly: "price_1THRHrQiT6r8AezdgE3qsXux",
+      yearly: "price_1THRIeQiT6r8Aezdl9m7aOUK"
     };
 
     const session = await stripe.checkout.sessions.create({
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       }
     });
 
-    res.status(200).json({ sessionId: session.id });
+   return res.status(200).json({ sessionId: session.id });
 
   } catch (err) {
     console.error(err);
