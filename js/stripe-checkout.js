@@ -66,48 +66,44 @@ const StripeCheckout = {
   // ─── CREATE CHECKOUT SESSION & REDIRECT ─────────────────────────
   async startCheckout(planType, userEmail = '', userId = '') {
     const stripe = await this.init();
-    const planConfig = StripeConfig.prices[planType];
-    
-    if (!planConfig) {
-      throw new Error(`Invalid plan type: ${planType}`);
-    }
 
     // If Stripe is not configured, use demo mode
     if (!stripe || !StripeConfig.isConfigured()) {
       return this.demoCheckout(planType, userEmail, userId);
     }
 
-    try {
-      // Build checkout session parameters
-      const sessionParams = {
-  lineItems: [{
-    price: planConfig.id,
-    quantity: 1
-  }],
-  mode: 'subscription',
-  successUrl: StripeConfig.successUrl + '?session_id={CHECKOUT_SESSION_ID}&plan=' + planType,
-  cancelUrl: StripeConfig.cancelUrl,
-  customerEmail: userEmail || undefined,
-  clientReferenceId: userId || undefined
-};
+try {
+  const res = await fetch('/api/create-checkout-session', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      planType,
+      userId,
+      email: userEmail
+    })
+  });
 
-      // Add trial if configured
-      if (StripeConfig.trialDays > 0) {
-        sessionParams.subscriptionData.trialPeriodDays = StripeConfig.trialDays;
-      }
+  const data = await res.json();
 
-      const { error } = await stripe.redirectToCheckout(sessionParams);
-      
-      if (error) {
-        console.error('[StripeCheckout] Error:', error);
-        throw new Error(error.message);
-      }
+  if (!data.sessionId) {
+    throw new Error('No session ID returned');
+  }
 
-    } catch (err) {
-      console.error('[StripeCheckout] Checkout failed:', err);
-      throw err;
-    }
-  },
+  const { error } = await stripe.redirectToCheckout({
+    sessionId: data.sessionId
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+} catch (err) {
+  console.error('[StripeCheckout] Checkout failed:', err);
+  throw err;
+}
+},
 
   // ─── DEMO CHECKOUT (when Stripe not configured) ─────────────────
   async demoCheckout(planType, userEmail, userId) {
