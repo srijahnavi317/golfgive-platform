@@ -2,7 +2,7 @@
 
 // ===== API HELPERS =====
 const API = {
-  base: ' ',
+  base: '/api ',
   async get(table, params = {}) {
     const qs = new URLSearchParams(params).toString();
     const res = await fetch(`${this.base}/${table}${qs ? '?' + qs : ''}`);
@@ -560,6 +560,33 @@ class TablePaginator {
     pager.addEventListener('nextPage', () => { this.currentPage++; this.load(); });
   }
 }
+// ===== CHECKOUT =====
+async function startCheckout(planType) {
+  try {
+    const user = Auth.getUser();
+
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        planType,
+        userId: user.id,
+        email: user.email
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || 'Checkout failed');
+
+    const stripe = Stripe('YOUR_PUBLIC_KEY');
+    await stripe.redirectToCheckout({ sessionId: data.sessionId });
+
+  } catch (err) {
+    console.error(err);
+    Notify.error(err.message);
+  }
+}
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
@@ -599,3 +626,4 @@ window.generateId = generateId;
 window.validateSubscription = validateSubscription;
 window.calculatePrizePool = calculatePrizePool;
 window.calculateContribution = calculateContribution;
+window.startCheckout = startCheckout;

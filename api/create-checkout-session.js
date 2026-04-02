@@ -8,7 +8,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { planType, userId, email } = req.body;
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+
+    const { planType, userId, email } = body;
 
     // 👇 Replace with YOUR real price IDs
     const prices = {
